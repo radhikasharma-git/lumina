@@ -3154,21 +3154,31 @@ function importData(event) {
   reader.onload = async (e) => {
     try {
       const data = JSON.parse(e.target.result);
+      let saved = 0, failed = 0;
       if (data.entries) {
         entries = data.entries;
-        for (const e of data.entries) {
-          try { await dbSaveEntry(currentUser.username, e); } catch(_) {}
+        for (const entry of data.entries) {
+          try {
+            await dbSaveEntry(currentUser.username, entry);
+            saved++;
+          } catch(err) {
+            console.error('Failed to save entry:', entry.ts, err);
+            failed++;
+          }
         }
       }
       if (data.goals) {
         goals = data.goals;
         await saveGoals();
       }
+      // Reload from DB to confirm
+      await loadData();
       renderGoals();
       renderChatThread();
-      alert('✦ Journal restored successfully.');
+      alert(`✦ Import complete. Saved: ${saved}, Failed: ${failed}, Loaded back: ${entries.length} entries.`);
     } catch(err) {
-      alert('Could not read that file — make sure it\'s a Lumina export JSON.');
+      console.error('Import error:', err);
+      alert('Could not read that file — make sure it\'s a Lumina export JSON. Error: ' + err.message);
     }
   };
   reader.readAsText(file);
