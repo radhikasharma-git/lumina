@@ -11,35 +11,59 @@ export default async function handler(req, res) {
   if (!match) return res.status(400).json({ error: 'Invalid YouTube URL' });
   const videoId = match[1];
 
+  const apiKey = process.env.YOUTUBE_API_KEY;
+
   try {
-    const pageRes = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
-    });
-    const html = await pageRes.text();
+    // Get video title
+    const videoRes = await fetch(
+      `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`
+    );
+    const videoData = await videoRes.json();
+    const title = videoData.items?.[0]?.snippet?.title || 'Unknown Title';
 
-    const titleMatch = html.match(/"title":"([^"]+)"/);
-    const title = titleMatch ? titleMatch[1].replace(/\\u0026/g, '&') : 'Unknown Title';
+    // Get caption tracks list
+    const captionRes = await fetch(
+      `https://www.googleapis.com/youtube/v3/captions?part=snippet&videoId=${videoId}&key=${apiKey}`
+    );
+    const captionData = await captionRes.json();
 
-    const captionMatch = html.match(/"captionTracks":\[(\{[^]]*?\})\]/);
-    if (!captionMatch) {
-      return res.status(404).json({ error: 'No captions available for this video' });
+    // Try timedtext API directly (works for most public videos)
+    const langs = ['en', 'en-US', 'en-GB', ''];
+    let transcript = '';
+
+    for (const lang of langs) {
+      const langParam = lang ? `&lang=${lang}` : '';
+      const tRes = await fetch(
+        `https://www.youtube.com/api/timedtext?v=${videoId}${langParam}&fmt=json3`
+      );
+      if (!tRes.ok) continue;
+      const json = await tRes.json();
+      const lines = (json.events || [])
+        .filter(e => e.segs)
+        .flatMap(e => e.segs.map(s => (s.utf8 || '').replace(/\n/g, ' ')))
+        .join(' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (lines.length > 50) { transcript = lines; break; }
+
+      // Try XML fallback
+      const xRes = await fetch(
+        `https://www.youtube.com/api/timedtext?v=${videoId}${langParam}`
+      );
+      const xml = await xRes.text();
+      const xmlLines = [...xml.matchAll(/<text[^>]*>([^<]*)<\/text>/g)]
+        .map(m => m[1]
+          .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+          .replace(/&quot;/g, '"').replace(/&#39;/g, "'").trim()
+        ).filter(Boolean).join(' ');
+      if (xmlLines.length > 50) { transcript = xmlLines; break; }
     }
 
-    const captionData = captionMatch[1];
-    const urlMatch = captionData.match(/"baseUrl":"([^"]+)"/);
-    if (!urlMatch) return res.status(404).json({ error: 'Could not find caption URL' });
+    if (!transcript) {
+      return res.status(404).json({ error: 'No captions available for this video. Try a video with closed captions enabled.' });
+    }
 
-    const captionUrl = urlMatch[1].replace(/\\u0026/g, '&');
-    const transcriptRes = await fetch(captionUrl);
-    const xml = await transcriptRes.text();
-
-    const lines = [...xml.matchAll(/<text[^>]*>([^<]*)<\/text>/g)]
-      .map(m => m[1]
-        .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-        .replace(/&quot;/g, '"').replace(/&#39;/g, "'").trim()
-      ).filter(Boolean);
-
-    res.status(200).json({ title, transcript: lines.join(' '), videoId });
+    res.status(200).json({ title, transcript, videoId });
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch transcript: ' + err.message });
   }
