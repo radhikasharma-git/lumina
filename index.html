@@ -2172,9 +2172,9 @@ async function sendMessage() {
 
   if (!mood && text) {
     try {
-      const inferRes = await fetch('https://api.anthropic.com/v1/messages', {
+      const inferRes = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...(ANTHROPIC_KEY ? { 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01' } : {}) },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'claude-opus-4-6',
           max_tokens: 20,
@@ -2304,9 +2304,9 @@ If mood has shifted today: name the arc. That's real data.
 
 FORMAT & LENGTH: Always respond in 3-4 tight paragraphs, 150-180 words total. Every sentence earns its place. No padding, no preamble, no trailing affirmations. Sharp and to the point.`;
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...(ANTHROPIC_KEY ? { 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01' } : {}) },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-opus-4-6',
         max_tokens: 1000,
@@ -2811,9 +2811,9 @@ Return ONLY a valid JSON object in exactly this structure, no markdown, no expla
 Make the Reddit queries specific and searchable — something someone could literally paste in and find relevant threads. Match them precisely to the person's state (if doubting, find doubt → breakthrough stories; if aligned, find stories that deepen and validate; if working on an SP, target those threads). Keep everything grounded, warm, and genuinely useful.`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...(ANTHROPIC_KEY ? { 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01' } : {}) },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-opus-4-6',
         max_tokens: 1000,
