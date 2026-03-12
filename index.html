@@ -1412,6 +1412,15 @@ textarea:focus { border-color: var(--gold-dim); }
         <button class="mood-btn" onclick="selectMood(this,'🌪 Scattered')">🌪 Scattered</button>
         <button class="mood-btn" onclick="selectMood(this,'😔 Doubting')">😔 Doubting</button>
       </div>
+      <div id="yt-bar" style="display:flex;gap:0.5rem;margin-bottom:0.6rem;align-items:center">
+        <input id="yt-input" type="text" placeholder="▷  Paste a YouTube link to give the coach context…"
+          style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,215,0,0.15);border-radius:10px;padding:0.5rem 0.8rem;color:var(--text);font-size:0.72rem;outline:none;font-family:inherit"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();loadYouTubeTranscript();}" />
+        <button onclick="loadYouTubeTranscript()" id="yt-btn"
+          style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.25);border-radius:8px;padding:0.4rem 0.8rem;color:var(--gold);font-size:0.7rem;cursor:pointer;white-space:nowrap">Load</button>
+        <button onclick="clearYouTubeTranscript()" id="yt-clear-btn" style="display:none;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.4rem 0.6rem;color:var(--muted);font-size:0.7rem;cursor:pointer">✕</button>
+      </div>
+      <div id="yt-status" style="font-size:0.65rem;color:var(--gold-dim);margin-bottom:0.4rem;display:none"></div>
       <div class="composer-row">
         <textarea id="journal-input" class="composer-input" placeholder="What's alive in you right now?" rows="2"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
@@ -1743,6 +1752,7 @@ window.addEventListener('resize', () => {
 // STATE
 // ═══════════════════════════════
 let selectedMood = '';
+let ytTranscriptContext = null; // { title, transcript } when a video is loaded
 let goals = [];
 let entries = [];
 
@@ -2122,6 +2132,42 @@ function renderChatThread() {
 // ═══════════════════════════════
 // SEND MESSAGE
 // ═══════════════════════════════
+async function loadYouTubeTranscript() {
+  const url = document.getElementById('yt-input').value.trim();
+  if (!url) return;
+  const status = document.getElementById('yt-status');
+  const btn = document.getElementById('yt-btn');
+  status.style.display = 'block';
+  status.textContent = '⏳ Fetching transcript…';
+  btn.disabled = true;
+  try {
+    const res = await fetch('/api/transcript', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    ytTranscriptContext = { title: data.title, transcript: data.transcript };
+    status.textContent = `✦ Loaded: "${data.title}" — coach will use this as context`;
+    status.style.color = 'var(--gold)';
+    document.getElementById('yt-clear-btn').style.display = 'inline-block';
+    document.getElementById('yt-input').style.opacity = '0.5';
+  } catch (err) {
+    status.textContent = '✕ ' + (err.message || 'Could not fetch transcript');
+    status.style.color = '#e57373';
+  }
+  btn.disabled = false;
+}
+
+function clearYouTubeTranscript() {
+  ytTranscriptContext = null;
+  document.getElementById('yt-input').value = '';
+  document.getElementById('yt-input').style.opacity = '1';
+  document.getElementById('yt-status').style.display = 'none';
+  document.getElementById('yt-clear-btn').style.display = 'none';
+}
+
 async function sendMessage() {
   const input = document.getElementById('journal-input');
   const text = input.value.trim();
@@ -2286,6 +2332,7 @@ ${profileContext || '(profile not yet set — gauge from their messages)'}
 
 CONTEXT:
 - What they just shared: mood = ${effectiveMood || 'not set'}, message = "${text || '(mood check-in)'}"
+${ytTranscriptContext ? `- They've shared a YouTube video for context. Title: "${ytTranscriptContext.title}". Transcript: ${ytTranscriptContext.transcript.slice(0, 4000)}${ytTranscriptContext.transcript.length > 4000 ? '… (truncated)' : ''}` : ''}
 - Today's conversation so far:\n${todayConversation || '(first message today)'}
 - Their intentions: ${goalsList}
 - Days on this journey: ${entries.length}
