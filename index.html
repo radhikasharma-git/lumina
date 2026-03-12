@@ -1827,7 +1827,9 @@ async function loadData() {
   entries = []; goals = [];
   try {
     const rows = await dbGetEntries(currentUser.username);
+    console.log('🔵 entries from DB:', rows);
     entries = rows.map(rowToEntry);
+    console.log('🟢 entries mapped:', entries.length, entries.map(e=>e.date));
   } catch(e) { console.error('loadData entries', e); }
   try {
     const rows = await dbGetGoals(currentUser.username);
