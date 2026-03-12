@@ -1577,6 +1577,16 @@ textarea:focus { border-color: var(--gold-dim); }
 
       <!-- DATA TOOLS -->
       <div style="margin-top:2rem;padding-top:1.2rem;border-top:1px solid var(--border)">
+        <div class="card-label" style="margin-bottom:0.8rem">⚙ App Settings</div>
+        <div style="margin-bottom:1.2rem">
+          <label style="font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:0.4rem">Anthropic API Key</label>
+          <div style="display:flex;gap:0.5rem">
+            <input id="api-key-input" type="password" placeholder="sk-ant-..." style="flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.6em 0.85em;color:var(--text);font-family:Lato,sans-serif;font-size:0.78rem;outline:none" oninput="clearApiKeyMsg()"/>
+            <button onclick="saveApiKey()" class="data-tool-btn" style="color:var(--gold);border-color:var(--gold-dim)">Save</button>
+          </div>
+          <div id="api-key-msg" style="font-size:0.65rem;margin-top:0.4rem;color:var(--gold)"></div>
+          <div style="font-size:0.62rem;color:var(--muted);margin-top:0.35rem;line-height:1.6">Get yours at <span style="color:var(--lavender)">console.anthropic.com</span> → API Keys. Once saved, the coach works for everyone on this app.</div>
+        </div>
         <div class="card-label" style="margin-bottom:0.8rem">Journal Data</div>
         <div style="display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1rem">
           <button class="data-tool-btn" onclick="exportData()">↓ Export journal</button>
@@ -1672,7 +1682,21 @@ async function dbSaveGoals(username, goals) {
   }
 }
 
+// ── API KEY MANAGEMENT ──
+async function dbGetApiKey() {
+  try {
+    const { data } = await supa.from('settings').select('value').eq('key', 'anthropic_api_key').single();
+    return data?.value || null;
+  } catch(e) { return null; }
+}
+async function dbSetApiKey(key) {
+  await supa.from('settings').upsert({ key: 'anthropic_api_key', value: key }, { onConflict: 'key' });
+}
+
+let ANTHROPIC_KEY = null; // loaded on boot
+
 // Convert DB row → app entry format
+
 function rowToEntry(r) {
   return { date: r.date, ts: r.ts, mood: r.mood||'', text: r.text||'', coachReply: r.coach_reply||'', backfilled: r.backfilled||false };
 }
@@ -1889,6 +1913,7 @@ async function bootApp() {
   try {
     await loadData();
     await loadProfile();
+    ANTHROPIC_KEY = await dbGetApiKey();
   } catch(e) { console.error('loadData/loadProfile error:', e); }
 
   const hide = id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; };
@@ -2149,7 +2174,7 @@ async function sendMessage() {
     try {
       const inferRes = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(ANTHROPIC_KEY ? { 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01' } : {}) },
         body: JSON.stringify({
           model: 'claude-opus-4-6',
           max_tokens: 20,
@@ -2281,7 +2306,7 @@ FORMAT & LENGTH: Always respond in 3-4 tight paragraphs, 150-180 words total. Ev
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...(ANTHROPIC_KEY ? { 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01' } : {}) },
       body: JSON.stringify({
         model: 'claude-opus-4-6',
         max_tokens: 1000,
@@ -2788,7 +2813,7 @@ Make the Reddit queries specific and searchable — something someone could lite
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...(ANTHROPIC_KEY ? { 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01' } : {}) },
       body: JSON.stringify({
         model: 'claude-opus-4-6',
         max_tokens: 1000,
@@ -3100,6 +3125,28 @@ function selectBfMood(btn, mood) {
   bfMood = mood;
   document.querySelectorAll('#bf-moods .mood-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+}
+
+async function saveApiKey() {
+  const val = document.getElementById('api-key-input').value.trim();
+  if (!val.startsWith('sk-ant-')) {
+    document.getElementById('api-key-msg').style.color = 'var(--rose)';
+    document.getElementById('api-key-msg').textContent = 'Key should start with sk-ant-';
+    return;
+  }
+  try {
+    await dbSetApiKey(val);
+    ANTHROPIC_KEY = val;
+    document.getElementById('api-key-input').value = '';
+    document.getElementById('api-key-msg').style.color = 'var(--gold)';
+    document.getElementById('api-key-msg').textContent = '✦ API key saved — coach is now active';
+  } catch(e) {
+    document.getElementById('api-key-msg').style.color = 'var(--rose)';
+    document.getElementById('api-key-msg').textContent = 'Error saving key: ' + e.message;
+  }
+}
+function clearApiKeyMsg() {
+  document.getElementById('api-key-msg').textContent = '';
 }
 
 async function saveBackfill() {
