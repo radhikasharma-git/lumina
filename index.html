@@ -2095,7 +2095,18 @@ function renderChatThread() {
   const today = todayKey();
   const todayEntries = entries.filter(e => e.date === today);
 
-  if (!todayEntries.length) {
+  // Show today + last 2 days if no entries today, so history is always visible
+  let displayEntries = todayEntries;
+  let showingHistory = false;
+  if (!todayEntries.length && entries.length) {
+    // Show last 3 days of entries
+    const sorted = [...entries].sort((a, b) => b.ts - a.ts);
+    const recentDays = [...new Set(sorted.map(e => e.date))].slice(0, 3);
+    displayEntries = entries.filter(e => recentDays.includes(e.date));
+    showingHistory = true;
+  }
+
+  if (!displayEntries.length) {
     thread.innerHTML = `
       <div class="chat-welcome">
         <span class="wlc-glyph">✦</span>
@@ -2105,28 +2116,35 @@ function renderChatThread() {
     return;
   }
 
-  // Group entries in chronological order (oldest first for display)
-  const sorted = [...todayEntries].sort((a, b) => a.ts - b.ts);
-  let html = `<div class="chat-day-divider"><span>✦ ${today}</span></div>`;
+  // Group by date
+  const sorted = [...displayEntries].sort((a, b) => a.ts - b.ts);
+  const byDate = {};
+  sorted.forEach(e => { if (!byDate[e.date]) byDate[e.date] = []; byDate[e.date].push(e); });
 
-  sorted.forEach(e => {
-    const moodCls = getMoodClass(e.mood);
-    html += `
-      <div class="bubble-user">
-        <div class="bubble-meta">
-          ${e.mood ? `<span class="mood-chip">${e.mood}</span>` : ''}
-          <span>${timeStr(e.ts)}</span>
-        </div>
-        <div class="bubble-body">${e.text || '<em style="color:var(--muted)">mood check-in</em>'}</div>
-      </div>`;
+  let html = '';
+  if (showingHistory) {
+    html += `<div class="chat-day-divider"><span>✦ Recent sessions — select a mood to start today</span></div>`;
+  }
 
-    if (e.coachReply) {
+  Object.keys(byDate).sort().forEach(date => {
+    html += `<div class="chat-day-divider"><span>✦ ${date}</span></div>`;
+    byDate[date].forEach(e => {
       html += `
-        <div class="bubble-lumina">
-          <div class="bubble-meta">✦ Lumina · ${timeStr(e.ts + 100)}</div>
-          <div class="bubble-body">${e.coachReply}</div>
+        <div class="bubble-user">
+          <div class="bubble-meta">
+            ${e.mood ? `<span class="mood-chip">${e.mood}</span>` : ''}
+            <span>${timeStr(e.ts)}</span>
+          </div>
+          <div class="bubble-body">${e.text || '<em style="color:var(--muted)">mood check-in</em>'}</div>
         </div>`;
-    }
+      if (e.coachReply) {
+        html += `
+          <div class="bubble-lumina">
+            <div class="bubble-meta">✦ Lumina · ${timeStr(e.ts + 100)}</div>
+            <div class="bubble-body">${e.coachReply}</div>
+          </div>`;
+      }
+    });
   });
 
   thread.innerHTML = html;
