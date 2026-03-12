@@ -1,0 +1,3135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumina · Your Manifestation Coach</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0d1a;
+  --bg2: #0f1225;
+  --card: #131629;
+  --card2: #181d35;
+  --border: #252a45;
+  --gold: #c9a96e;
+  --gold-dim: #7a6040;
+  --gold-glow: rgba(201,169,110,0.15);
+  --lavender: #9b8ec4;
+  --rose: #c48e9b;
+  --text: #e8e4f0;
+  --muted: #6b6880;
+  --soft: #b0aac0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* STARFIELD */
+#stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: twinkle var(--d, 4s) ease-in-out infinite var(--delay, 0s);
+}
+@keyframes twinkle {
+  0%,100% { opacity: var(--min-o, 0.1); }
+  50% { opacity: var(--max-o, 0.6); }
+}
+
+/* AMBIENT GLOW */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 20%, rgba(155,142,196,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 70%, rgba(196,142,155,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 0%, rgba(201,169,110,0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── LAYOUT ── */
+html, body { height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* FIXED TOP HEADER */
+.top-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  background: rgba(11, 13, 26, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.9rem 1.5rem 0;
+  max-width: 100%;
+}
+
+.top-bar-inner {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* Compact header row */
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.6rem;
+}
+
+.logo-glyph {
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 8px rgba(201,169,110,0.5));
+  flex-shrink: 0;
+}
+
+.header-text h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  color: #fff;
+  line-height: 1;
+}
+.header-text h1 span { color: var(--gold); font-style: italic; }
+
+.tagline {
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-top: 0.15rem;
+}
+
+/* AFFIRMATION STRIP */
+.affirmation-strip {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--gold);
+  text-align: center;
+  padding: 0.35rem 0;
+  border-top: 1px solid rgba(201,169,110,0.1);
+  border-bottom: 1px solid rgba(201,169,110,0.1);
+  margin-bottom: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* TABS — in the fixed header */
+.tabs {
+  display: flex;
+  gap: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px 10px 0 0;
+  padding: 0.25rem 0.25rem 0;
+  overflow: hidden;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.55rem 0.5rem;
+  border-radius: 8px 8px 0 0;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+  background: var(--card2);
+  color: var(--gold);
+  border-bottom: 2px solid var(--gold);
+}
+
+.tab:hover:not(.active) { color: var(--soft); background: rgba(255,255,255,0.03); }
+
+/* MAIN SCROLL AREA */
+.app {
+  position: relative;
+  z-index: 1;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 3rem;
+  /* pushed down below fixed header — JS sets this */
+}
+
+/* PANELS */
+.panel { display: none; }
+.panel.active {
+  display: block;
+  animation: fadeUp 0.5s ease forwards;
+}
+
+/* CARDS */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.8rem;
+  margin-bottom: 1.2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+}
+
+.card-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* DATE */
+.date-line {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 300;
+  color: var(--soft);
+  margin-bottom: 1.4rem;
+  font-style: italic;
+}
+
+/* MOOD SELECTOR */
+.mood-row {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.4rem;
+}
+
+.mood-btn {
+  padding: 0.4em 0.9em;
+  border-radius: 50px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--soft);
+  font-family: 'Lato', sans-serif;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mood-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+.mood-btn.selected {
+  background: var(--gold-glow);
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: 0 0 12px var(--gold-glow);
+}
+
+/* TEXTAREA */
+textarea {
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 300;
+  line-height: 1.8;
+  resize: vertical;
+  min-height: 130px;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+textarea::placeholder { color: var(--muted); font-style: italic; }
+textarea:focus { border-color: var(--gold-dim); }
+
+/* BUTTON */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.7em 1.8em;
+  border-radius: 50px;
+  border: 1px solid var(--gold-dim);
+  background: var(--gold-glow);
+  color: var(--gold);
+  font-family: 'Lato', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.btn-primary:hover {
+  background: rgba(201,169,110,0.25);
+  box-shadow: 0 0 20px var(--gold-glow);
+}
+
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5em 1.2em;
+  border-radius: 50px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--soft);
+  font-family: 'Lato', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-secondary:hover { border-color: var(--lavender); color: var(--lavender); }
+
+/* AI RESPONSE */
+.coach-response {
+  background: linear-gradient(135deg, rgba(155,142,196,0.07), rgba(201,169,110,0.05));
+  border: 1px solid rgba(155,142,196,0.2);
+  border-radius: 14px;
+  padding: 1.6rem;
+  margin-top: 1rem;
+  display: none;
+}
+
+.coach-response.visible { display: block; animation: fadeUp 0.6s ease forwards; }
+
+.coach-name {
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--lavender);
+  margin-bottom: 1rem;
+}
+
+.coach-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  line-height: 1.85;
+  color: var(--text);
+  font-weight: 300;
+}
+
+.coach-text strong { color: var(--gold); font-weight: 400; }
+
+.loading-dots {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  height: 1.2em;
+}
+.loading-dots span {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--lavender);
+  animation: bounce 1.2s ease infinite;
+}
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce {
+  0%,80%,100% { transform: scale(0.7); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* TECHNIQUES */
+.technique-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+@media (max-width: 500px) { .technique-grid { grid-template-columns: 1fr; } }
+
+.technique-card {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.3rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.technique-card:hover {
+  border-color: var(--gold-dim);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  transform: translateY(-1px);
+}
+
+.tech-icon { font-size: 1.5rem; margin-bottom: 0.6rem; display: block; }
+.tech-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  color: #fff;
+  margin-bottom: 0.3rem;
+}
+.tech-desc { font-size: 0.7rem; color: var(--muted); line-height: 1.65; }
+
+.technique-detail {
+  background: var(--card);
+  border: 1px solid var(--gold-dim);
+  border-radius: 14px;
+  padding: 1.6rem;
+  margin-top: 1rem;
+  display: none;
+}
+.technique-detail.visible { display: block; animation: fadeUp 0.4s ease; }
+.technique-detail h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+  font-weight: 300;
+}
+.technique-detail p {
+  font-size: 0.8rem;
+  color: var(--soft);
+  line-height: 1.8;
+  margin-bottom: 0.8rem;
+}
+.technique-steps {
+  list-style: none;
+  counter-reset: steps;
+}
+.technique-steps li {
+  counter-increment: steps;
+  display: flex;
+  gap: 0.8rem;
+  font-size: 0.78rem;
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 0.6rem;
+  align-items: flex-start;
+}
+.technique-steps li::before {
+  content: counter(steps);
+  min-width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  font-size: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+/* GOALS */
+.goal-input-row {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.goal-input {
+  flex: 1;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  color: var(--text);
+  font-family: 'Lato', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 300;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.goal-input:focus { border-color: var(--gold-dim); }
+.goal-input::placeholder { color: var(--muted); }
+
+.goals-list { display: flex; flex-direction: column; gap: 0.7rem; }
+
+.goal-item {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: border-color 0.2s;
+}
+
+.goal-item:hover { border-color: var(--border); }
+
+.goal-check {
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  border: 1px solid var(--gold-dim);
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  color: var(--gold);
+}
+.goal-check.done {
+  background: var(--gold-glow);
+  border-color: var(--gold);
+}
+
+.goal-text-block { flex: 1; }
+.goal-title { font-size: 0.82rem; color: var(--text); line-height: 1.5; }
+.goal-title.done { text-decoration: line-through; color: var(--muted); }
+
+.goal-meta {
+  font-size: 0.65rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+.goal-progress-bar {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+.goal-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--lavender), var(--gold));
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.goal-delete {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 0.2rem;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+.goal-delete:hover { color: var(--rose); }
+
+/* ── CHAT THREAD ── */
+.chat-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  min-height: 60px;
+  padding-bottom: 9rem;
+}
+
+.chat-day-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 1rem 0 0.6rem;
+}
+.chat-day-divider span {
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+.chat-day-divider::before,
+.chat-day-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* USER BUBBLE */
+.bubble-user {
+  align-self: flex-end;
+  max-width: 82%;
+  animation: bubbleIn 0.3s ease forwards;
+}
+.bubble-user .bubble-meta {
+  text-align: right;
+  font-size: 0.6rem;
+  color: var(--muted);
+  margin-bottom: 0.25rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+}
+.bubble-user .bubble-body {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 14px 14px 4px 14px;
+  padding: 0.8rem 1rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text);
+}
+.mood-chip.inferred {
+  border-style: dashed;
+  opacity: 0.85;
+}
+.mood-chip.inferred::after {
+  content: ' ·';
+  font-size: 0.55rem;
+  opacity: 0.6;
+  font-style: italic;
+}
+  font-size: 0.6rem;
+  padding: 0.15em 0.55em;
+  border-radius: 20px;
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+}
+
+/* LUMINA BUBBLE */
+.bubble-lumina {
+  align-self: flex-start;
+  max-width: 88%;
+  animation: bubbleIn 0.3s ease forwards;
+}
+.bubble-lumina .bubble-meta {
+  font-size: 0.6rem;
+  color: var(--lavender);
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.bubble-lumina .bubble-body {
+  background: linear-gradient(135deg, rgba(155,142,196,0.09), rgba(201,169,110,0.05));
+  border: 1px solid rgba(155,142,196,0.2);
+  border-radius: 14px 14px 14px 4px;
+  padding: 1rem 1.2rem;
+  font-size: 0.82rem;
+  line-height: 1.82;
+  color: var(--text);
+}
+.bubble-lumina .bubble-body strong { color: var(--gold); font-weight: 400; }
+.bubble-lumina .bubble-body p { margin-bottom: 0.7rem; }
+.bubble-lumina .bubble-body p:last-child { margin-bottom: 0; }
+
+/* TYPING INDICATOR */
+.bubble-typing .bubble-body {
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  align-items: center;
+  min-width: 60px;
+}
+
+/* COMPOSER */
+.composer-wrap {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 780px;
+  background: rgba(11, 13, 26, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 0.8rem 1.5rem 1rem;
+  border-top: 1px solid var(--border);
+  z-index: 99;
+}
+
+.composer-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-end;
+}
+
+.composer-input {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s;
+  max-height: 120px;
+  overflow-y: auto;
+}
+.composer-input:focus { border-color: var(--gold-dim); }
+.composer-input::placeholder { color: var(--muted); font-style: italic; }
+
+.send-btn {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  border: 1px solid var(--gold-dim);
+  background: var(--gold-glow);
+  color: var(--gold);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.send-btn:hover { background: rgba(201,169,110,0.25); box-shadow: 0 0 14px var(--gold-glow); }
+.send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+@keyframes bubbleIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* EMPTY WELCOME */
+.chat-welcome {
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+  color: var(--muted);
+}
+.chat-welcome .wlc-glyph { font-size: 1.8rem; margin-bottom: 0.6rem; display: block; filter: drop-shadow(0 0 8px rgba(201,169,110,0.4)); }
+.chat-welcome .wlc-title { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--soft); margin-bottom: 0.4rem; font-style: italic; }
+.chat-welcome .wlc-sub { font-size: 0.72rem; line-height: 1.7; }
+.sci-item {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 0.6rem;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.sci-item:hover { border-color: var(--gold-dim); }
+
+.sci-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.9rem 1.1rem;
+  cursor: pointer;
+  background: var(--card2);
+  user-select: none;
+}
+
+.sci-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+.sci-title {
+  flex: 1;
+  font-size: 0.78rem;
+  color: var(--text);
+  font-weight: 400;
+}
+
+.sci-arrow {
+  font-size: 0.7rem;
+  color: var(--gold);
+  transition: transform 0.25s;
+  flex-shrink: 0;
+}
+.sci-arrow.open { transform: rotate(90deg); }
+
+.sci-body {
+  display: none;
+  padding: 1rem 1.2rem 1.1rem;
+  font-size: 0.74rem;
+  color: var(--soft);
+  line-height: 1.85;
+  border-top: 1px solid var(--border);
+  background: var(--bg2);
+}
+.sci-body strong { color: var(--text); font-weight: 400; }
+.sci-body em { color: var(--gold); font-style: italic; }
+.sci-body.open { display: block; animation: fadeUp 0.3s ease; }
+
+/* COMMUNITY RESOURCES */
+.community-intro {
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+.community-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  padding: 0.8rem 0;
+}
+.community-section {
+  margin-bottom: 1.2rem;
+}
+.community-section-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.55rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.community-item {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  transition: border-color 0.2s;
+  cursor: default;
+}
+.community-item:hover { border-color: var(--gold-dim); }
+.community-item-title {
+  font-size: 0.78rem;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 0.25rem;
+}
+.community-item-meta {
+  font-size: 0.62rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.community-item-tag {
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  border-radius: 20px;
+  padding: 0.1em 0.55em;
+  font-size: 0.58rem;
+}
+.community-search-link {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--lavender);
+  background: rgba(155,142,196,0.06);
+  border: 1px solid rgba(155,142,196,0.18);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 0.45rem;
+  display: block;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.community-search-link:hover { border-color: var(--lavender); }
+.community-search-link span {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.58rem;
+  font-style: normal;
+  color: var(--muted);
+  display: block;
+  margin-top: 0.15rem;
+  letter-spacing: 0.05em;
+}
+.community-refresh {
+  font-size: 0.62rem;
+  color: var(--gold-dim);
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  text-align: right;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+.community-refresh:hover { color: var(--gold); }
+
+.journal-entry {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 0.7rem;
+}
+.journal-date { font-size: 0.65rem; color: var(--gold); margin-bottom: 0.4rem; letter-spacing: 0.1em; }
+.journal-mood { font-size: 0.65rem; color: var(--lavender); margin-bottom: 0.5rem; }
+.journal-text { font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; color: var(--soft); line-height: 1.7; font-style: italic; }
+
+/* AFFIRMATION BANNER */
+.affirmation-bar {
+  text-align: center;
+  padding: 1.4rem;
+  margin-bottom: 1.2rem;
+  background: linear-gradient(135deg, rgba(155,142,196,0.08), rgba(201,169,110,0.06));
+  border: 1px solid rgba(201,169,110,0.15);
+  border-radius: 14px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--gold);
+  line-height: 1.6;
+}
+.affirmation-bar small {
+  display: block;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+  font-style: normal;
+}
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.8;
+}
+.empty-state .empty-icon { font-size: 2rem; margin-bottom: 0.8rem; display: block; }
+
+/* TIMELINE */
+.timeline-intro {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 1.6rem;
+  font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  border-left: 2px solid var(--gold-dim);
+  padding-left: 1rem;
+}
+
+.belief-meter-wrap {
+  margin-bottom: 1.6rem;
+}
+.belief-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.belief-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.belief-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  color: #fff;
+  font-style: italic;
+}
+.belief-track {
+  height: 6px;
+  background: var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+.belief-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.6s ease;
+  background: linear-gradient(90deg, var(--rose), var(--lavender), var(--gold));
+}
+.belief-poles {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6rem;
+  color: var(--muted);
+}
+
+/* ── UNIFIED TIMELINE CHART ── */
+.tl-chart-outer {
+  position: relative;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1rem 0.5rem 3.2rem; /* left pad for y-axis labels */
+  overflow: visible;
+}
+.tl-chart-svg { width: 100%; display: block; overflow: visible; }
+
+/* Y-axis label column */
+.tl-y-labels {
+  position: absolute;
+  left: 0; top: 1rem;
+  width: 2.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(100% - 2.2rem);
+  pointer-events: none;
+}
+.tl-y-label {
+  font-size: 0.55rem;
+  color: var(--muted);
+  text-align: right;
+  padding-right: 0.4rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Legend row */
+.tl-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+.tl-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.58rem;
+  color: var(--soft);
+}
+.tl-legend-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* DAY BLOCK (entry list below chart) */
+.tl-day-block { margin-bottom: 1.4rem; }
+.tl-day-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+  user-select: none;
+}
+.tl-day-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold-dim), transparent);
+}
+.tl-day-toggle { font-size: 0.6rem; color: var(--gold); flex-shrink: 0; }
+.tl-day-entries { }
+.tl-day-entries.collapsed { display: none; }
+
+/* SPINE line */
+.tl-spine-inner {
+  position: relative;
+  padding-left: 1.4rem;
+}
+.tl-spine-inner::before {
+  content: '';
+  position: absolute;
+  left: 0.32rem; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, var(--gold-dim), rgba(37,42,69,0.15));
+}
+
+.tl-entry {
+  display: flex; gap: 0.8rem;
+  margin-bottom: 0.15rem;
+  position: relative;
+  animation: fadeUp 0.3s ease forwards;
+}
+.tl-entry-dot {
+  width: 0.52rem; height: 0.52rem;
+  border-radius: 50%; flex-shrink: 0;
+  margin-top: 0.42rem; margin-left: -1.66rem;
+  position: relative; z-index: 2;
+  transition: transform 0.2s;
+}
+.tl-entry:hover .tl-entry-dot { transform: scale(1.5); }
+.tl-entry-body {
+  flex: 1; padding-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(37,42,69,0.35);
+  min-width: 0;
+}
+.tl-entry:last-child .tl-entry-body { border-bottom: none; }
+.tl-entry-meta { display:flex; align-items:center; gap:0.45rem; margin-bottom:0.28rem; flex-wrap:wrap; }
+.tl-time { font-size:0.58rem; color:var(--muted); letter-spacing:0.04em; flex-shrink:0; }
+.tl-mood-pill { font-size:0.57rem; padding:0.1em 0.48em; border-radius:20px; border:1px solid; letter-spacing:0.02em; }
+.tl-shift { font-size:0.55rem; font-style:italic; opacity:0.75; }
+.tl-entry-text { font-family:'Cormorant Garamond',serif; font-size:0.92rem; color:var(--text); line-height:1.65; margin-bottom:0.35rem; }
+.tl-lumina-reply { background:linear-gradient(135deg,rgba(155,142,196,0.07),rgba(201,169,110,0.04)); border:1px solid rgba(155,142,196,0.15); border-radius:8px; padding:0.6rem 0.85rem; margin-top:0.3rem; }
+.tl-lumina-label { font-size:0.54rem; letter-spacing:0.13em; color:var(--lavender); margin-bottom:0.28rem; text-transform:uppercase; }
+.tl-lumina-text { font-size:0.71rem; color:var(--soft); line-height:1.7; }
+.tl-lumina-text p { margin-bottom:0.3rem; } .tl-lumina-text p:last-child { margin-bottom:0; }
+.tl-lumina-text strong { color:var(--text); font-weight:400; }
+
+/* Collapsed group node */
+.tl-group { display:flex; gap:0.8rem; margin-bottom:0.15rem; cursor:pointer; }
+.tl-group-dot { width:1rem; height:1rem; border-radius:50%; flex-shrink:0; margin-top:0.28rem; margin-left:-1.82rem; z-index:2; position:relative; display:flex; align-items:center; justify-content:center; font-size:0.44rem; font-weight:700; transition:transform 0.2s; }
+.tl-group:hover .tl-group-dot { transform:scale(1.2); }
+.tl-group-body { flex:1; padding-bottom:0.8rem; border-bottom:1px solid rgba(37,42,69,0.35); }
+.tl-group-summary { font-size:0.68rem; color:var(--soft); font-style:italic; line-height:1.5; }
+.tl-group-expand { font-size:0.57rem; color:var(--gold); margin-top:0.2rem; letter-spacing:0.07em; }
+.tl-group-entries { display:none; margin-top:0.5rem; }
+.tl-group-entries.open { display:block; }
+
+/* RESISTANCE BANNER — shown when doubt detected */
+.resistance-banner {
+  background: linear-gradient(135deg, rgba(196,142,155,0.08), rgba(155,142,196,0.06));
+  border: 1px solid rgba(196,142,155,0.25);
+  border-radius: 12px;
+  padding: 1.2rem 1.4rem;
+  margin-bottom: 1.2rem;
+  display: none;
+}
+.resistance-banner.visible { display: block; animation: fadeUp 0.5s ease; }
+.resistance-title {
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rose);
+  margin-bottom: 0.5rem;
+}
+.resistance-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--text);
+  line-height: 1.75;
+}
+
+/* STREAK */
+.streak-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1.4rem;
+  flex-wrap: wrap;
+}
+.ob-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.ob-chip {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0.3em 0.8em;
+  color: var(--soft);
+  font-family: 'Lato', sans-serif;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.ob-chip:hover { border-color: var(--gold-dim); color: var(--text); }
+.ob-chip.active {
+  background: var(--gold-glow);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.data-tool-btn {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.45em 0.9em;
+  color: var(--soft);
+  font-family: 'Lato', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.data-tool-btn:hover { border-color: var(--gold-dim); color: var(--text); }
+
+.streak-dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.3s;
+}
+.streak-dot.done { background: var(--gold); box-shadow: 0 0 6px var(--gold-glow); }
+.streak-dot.doubt-day { background: var(--rose); }
+.streak-label {
+  font-size: 0.65rem;
+  color: var(--muted);
+  margin-left: 0.4rem;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in { animation: fadeUp 0.5s ease forwards; }
+</style>
+</head>
+<body>
+
+<!-- ONBOARDING SCREEN (shown once after signup) -->
+<div id="onboarding-screen" style="display:none;position:fixed;inset:0;z-index:9998;background:var(--bg);align-items:center;justify-content:center;padding:1.5rem;overflow-y:auto">
+  <canvas id="ob-stars" style="position:absolute;inset:0;pointer-events:none"></canvas>
+  <div style="position:relative;z-index:1;width:100%;max-width:400px;padding:2rem 0">
+    <div style="text-align:center;margin-bottom:1.8rem">
+      <div style="font-size:1.6rem;margin-bottom:0.4rem">✦</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--text)">Welcome to Lumina</div>
+      <div style="font-size:0.68rem;color:var(--muted);margin-top:0.4rem;line-height:1.7">A few questions so Lumina can coach you personally.<br>You can update these any time in your profile.</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.6rem;display:flex;flex-direction:column;gap:1.1rem">
+
+      <!-- NAME -->
+      <div>
+        <label class="ob-label">What should Lumina call you?</label>
+        <input id="ob-name" type="text" placeholder="Your first name or nickname"
+          style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.6em 0.85em;color:var(--text);font-family:Lato,sans-serif;font-size:0.85rem;outline:none">
+      </div>
+
+      <!-- DOB -->
+      <div>
+        <label class="ob-label">Date of birth <span style="color:var(--muted);font-size:0.6rem;letter-spacing:0">(helps Lumina contextualise your journey)</span></label>
+        <input id="ob-dob" type="date"
+          style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.6em 0.85em;color:var(--text);font-family:Lato,sans-serif;font-size:0.85rem;outline:none">
+      </div>
+
+      <!-- GENDER -->
+      <div>
+        <label class="ob-label">How do you identify?</label>
+        <div style="display:flex;flex-wrap:wrap;gap:0.4rem" id="ob-gender-btns">
+          <button class="ob-chip" onclick="selectObChip(this,'ob-gender','She/her')">She/her</button>
+          <button class="ob-chip" onclick="selectObChip(this,'ob-gender','He/him')">He/him</button>
+          <button class="ob-chip" onclick="selectObChip(this,'ob-gender','They/them')">They/them</button>
+          <button class="ob-chip" onclick="selectObChip(this,'ob-gender','Prefer not to say')">Prefer not to say</button>
+        </div>
+        <input id="ob-gender" type="hidden" value="">
+      </div>
+
+      <!-- MANIFESTATION EXPERIENCE -->
+      <div>
+        <label class="ob-label">How long have you been working with manifestation?</label>
+        <div style="display:flex;flex-wrap:wrap;gap:0.4rem" id="ob-exp-btns">
+          <button class="ob-chip" onclick="selectObChip(this,'ob-exp','I\'m brand new')">I'm brand new</button>
+          <button class="ob-chip" onclick="selectObChip(this,'ob-exp','A few months')">A few months</button>
+          <button class="ob-chip" onclick="selectObChip(this,'ob-exp','1–2 years')">1–2 years</button>
+          <button class="ob-chip" onclick="selectObChip(this,'ob-exp','3–5 years')">3–5 years</button>
+          <button class="ob-chip" onclick="selectObChip(this,'ob-exp','5+ years')">5+ years</button>
+        </div>
+        <input id="ob-exp" type="hidden" value="">
+      </div>
+
+      <!-- PRIMARY DESIRE -->
+      <div>
+        <label class="ob-label">What's your main focus right now?</label>
+        <div style="display:flex;flex-wrap:wrap;gap:0.4rem" id="ob-focus-btns">
+          <button class="ob-chip" onclick="toggleObChip(this,'ob-focus','Love &amp; relationships')">Love &amp; relationships</button>
+          <button class="ob-chip" onclick="toggleObChip(this,'ob-focus','Career &amp; abundance')">Career &amp; abundance</button>
+          <button class="ob-chip" onclick="toggleObChip(this,'ob-focus','Health &amp; body')">Health &amp; body</button>
+          <button class="ob-chip" onclick="toggleObChip(this,'ob-focus','Self-concept')">Self-concept</button>
+          <button class="ob-chip" onclick="toggleObChip(this,'ob-focus','Specific person (SP)')">Specific person (SP)</button>
+          <button class="ob-chip" onclick="toggleObChip(this,'ob-focus','General alignment')">General alignment</button>
+          <button class="ob-chip" onclick="toggleObChip(this,'ob-focus','Something else')">Something else</button>
+        </div>
+        <input id="ob-focus" type="hidden" value="">
+      </div>
+
+      <!-- BIGGEST BLOCK -->
+      <div>
+        <label class="ob-label">What's your biggest block in manifestation? <span style="color:var(--muted);font-size:0.6rem;letter-spacing:0">(optional)</span></label>
+        <textarea id="ob-block" rows="2" placeholder="e.g. I keep doubting, I can't let go, I don't feel worthy..."
+          style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.6em 0.85em;color:var(--text);font-family:'Cormorant Garamond',serif;font-size:0.9rem;resize:none;line-height:1.6;outline:none"></textarea>
+      </div>
+
+    </div>
+
+    <div id="ob-error" style="font-size:0.7rem;color:var(--rose);text-align:center;margin-top:0.8rem;min-height:1rem"></div>
+
+    <button onclick="saveOnboarding()"
+      style="width:100%;margin-top:1rem;background:linear-gradient(135deg,var(--gold-dim),var(--gold));border:none;border-radius:10px;padding:0.8em;color:#0b0d1a;font-family:Lato,sans-serif;font-size:0.8rem;letter-spacing:0.15em;cursor:pointer">
+      ✦ BEGIN MY JOURNEY
+    </button>
+    <div style="text-align:center;margin-top:0.7rem">
+      <span onclick="skipOnboarding()" style="font-size:0.62rem;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px">Skip for now</span>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:1.5rem">
+  <canvas id="login-stars" style="position:absolute;inset:0;pointer-events:none"></canvas>
+  <div style="position:relative;z-index:1;width:100%;max-width:360px">
+    <div style="text-align:center;margin-bottom:2rem">
+      <div style="font-size:2rem;margin-bottom:0.5rem">✦</div>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;letter-spacing:0.08em;color:var(--text)">Lumi<span style="color:var(--gold)">na</span></h1>
+      <div style="font-size:0.62rem;letter-spacing:0.2em;color:var(--muted);margin-top:0.3rem;text-transform:uppercase">Your Manifestation Coach</div>
+    </div>
+
+    <!-- LOGIN / SIGNUP TABS -->
+    <div style="display:flex;gap:0;margin-bottom:1.4rem;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:3px">
+      <button id="login-tab-btn" onclick="showLoginTab('login')" style="flex:1;background:var(--card);border:none;border-radius:8px;padding:0.55em;color:var(--text);font-family:Lato,sans-serif;font-size:0.72rem;letter-spacing:0.1em;cursor:pointer;transition:background 0.2s">Sign In</button>
+      <button id="signup-tab-btn" onclick="showLoginTab('signup')" style="flex:1;background:transparent;border:none;border-radius:8px;padding:0.55em;color:var(--muted);font-family:Lato,sans-serif;font-size:0.72rem;letter-spacing:0.1em;cursor:pointer;transition:background 0.2s">New Profile</button>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.6rem">
+      <!-- USERNAME -->
+      <div style="margin-bottom:1rem">
+        <label style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:0.4rem">Username</label>
+        <input id="login-username" type="text" autocomplete="off" autocapitalize="off" placeholder="your name or handle"
+          style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.6em 0.85em;color:var(--text);font-family:Lato,sans-serif;font-size:0.85rem;outline:none;transition:border-color 0.2s"
+          oninput="clearLoginError()" onkeydown="if(event.key==='Enter')handleLoginSubmit()">
+      </div>
+
+      <!-- PIN -->
+      <div style="margin-bottom:1.4rem">
+        <label style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:0.4rem">Password</label>
+        <input id="login-pin" type="password" autocomplete="current-password" placeholder="your password"
+          style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.6em 0.85em;color:var(--text);font-family:Lato,sans-serif;font-size:0.85rem;letter-spacing:0.05em;outline:none;transition:border-color 0.2s"
+          oninput="clearLoginError()" onkeydown="if(event.key==='Enter')handleLoginSubmit()">
+      </div>
+
+      <div id="login-error" style="font-size:0.7rem;color:var(--rose);margin-bottom:0.8rem;min-height:1rem;text-align:center"></div>
+
+      <button onclick="handleLoginSubmit()" id="login-submit-btn"
+        style="width:100%;background:linear-gradient(135deg,var(--gold-dim),var(--gold));border:none;border-radius:10px;padding:0.75em;color:#0b0d1a;font-family:Lato,sans-serif;font-size:0.8rem;font-weight:400;letter-spacing:0.15em;cursor:pointer;transition:opacity 0.2s">
+        ✦ ENTER
+      </button>
+    </div>
+
+    <div style="text-align:center;margin-top:1rem;font-size:0.62rem;color:var(--muted);line-height:1.7">
+      Your journal is private to your profile. You'll need to sign in each session.<br>Share this app with friends — each person creates their own.
+    </div>
+  </div>
+</div>
+
+<canvas id="stars"></canvas>
+
+<!-- FIXED TOP BAR -->
+<div class="top-bar" id="top-bar">
+  <div class="top-bar-inner">
+    <div class="header-row">
+      <span class="logo-glyph">✦</span>
+      <div class="header-text">
+        <h1>Lumi<span>na</span></h1>
+        <div class="tagline">Neuroscience · Quantum Physics · Psychology · Manifestation</div>
+      </div>
+    </div>
+    <div class="affirmation-strip" id="affirmation-text">Loading your affirmation...</div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('checkin')">✦ Check-in</button>
+      <button class="tab" onclick="switchTab('timeline')">◉ Timeline</button>
+      <button class="tab" onclick="switchTab('techniques')">◈ Practices</button>
+      <button class="tab" onclick="switchTab('goals')">◎ Goals</button>
+      <button class="tab" onclick="logOut()" id="profile-btn" style="margin-left:auto;font-size:0.58rem;opacity:0.7" title="Switch profile">⊙ <span id="profile-name"></span></button>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="main-app">
+
+  <!-- RESISTANCE BANNER (shown when doubting) -->
+  <div class="resistance-banner" id="resistance-banner">
+    <div class="resistance-title">◈ What's happening right now</div>
+    <div class="resistance-text" id="resistance-text"></div>
+  </div>
+
+  <!-- CHECK-IN PANEL -->
+  <div class="panel active" id="panel-checkin">
+
+    <!-- TODAY'S THREAD -->
+    <div class="chat-thread" id="chat-thread">
+      <!-- messages render here -->
+    </div>
+
+    <!-- COMPOSER -->
+    <div class="composer-wrap" id="composer-wrap">
+      <div class="mood-row" id="mood-row" style="margin-bottom:0.8rem">
+        <button class="mood-btn" onclick="selectMood(this,'✨ Aligned')">✨ Aligned</button>
+        <button class="mood-btn" onclick="selectMood(this,'🌊 Flowing')">🌊 Flowing</button>
+        <button class="mood-btn" onclick="selectMood(this,'🌙 Reflective')">🌙 Reflective</button>
+        <button class="mood-btn" onclick="selectMood(this,'🌱 Growing')">🌱 Growing</button>
+        <button class="mood-btn" onclick="selectMood(this,'💫 Hopeful')">💫 Hopeful</button>
+        <button class="mood-btn" onclick="selectMood(this,'🌪 Scattered')">🌪 Scattered</button>
+        <button class="mood-btn" onclick="selectMood(this,'😔 Doubting')">😔 Doubting</button>
+      </div>
+      <div class="composer-row">
+        <textarea id="journal-input" class="composer-input" placeholder="What's alive in you right now?" rows="2"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
+        <button class="send-btn" onclick="sendMessage()" id="send-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div style="font-size:0.6rem;color:var(--muted);margin-top:0.4rem">Enter to send · Shift+Enter for new line</div>
+    </div>
+  </div>
+
+  <!-- TECHNIQUES PANEL -->
+  <div class="panel" id="panel-techniques">
+    <div class="card">
+      <div class="card-label">The Science Behind It</div>
+
+      <!-- SCIENCE ACCORDION -->
+      <div id="science-accordion" style="margin-bottom:1.6rem">
+        <div class="sci-item" onclick="toggleSci('quantum')">
+          <div class="sci-header">
+            <span class="sci-icon">⚛️</span>
+            <span class="sci-title">Quantum Physics & the Observer Effect</span>
+            <span class="sci-arrow" id="arr-quantum">▸</span>
+          </div>
+          <div class="sci-body" id="sci-quantum">
+            At the subatomic level, particles exist in a <strong>superposition of all possible states</strong> until observed — a phenomenon confirmed by the double-slit experiment. The act of observation literally collapses a wave of probability into a specific particle. Applied to consciousness: your sustained, emotionally-charged attention acts as an observer that collapses the quantum field toward a specific experienced reality.<br><br>
+            <strong>Quantum coherence</strong> — the state in which quantum systems operate in synchronized, ordered patterns — is disrupted by stress and noise (decoherence). Meditative, regulated states may promote greater coherence in biological systems, including the brain (Penrose-Hameroff theory of quantum consciousness). This is one scientific basis for why a calm, focused inner state appears to be more "generative" than a stressed one.<br><br>
+            <em>Key principle for manifestation:</em> You are not separate from the field of possibilities — you are an observer within it. Your dominant emotional frequency and beliefs shape which probabilities you repeatedly collapse into experience. This is why inner state matters more than outer action.
+          </div>
+        </div>
+
+        <div class="sci-item" onclick="toggleSci('neuro')">
+          <div class="sci-header">
+            <span class="sci-icon">🧠</span>
+            <span class="sci-title">Neuroscience & Reality Creation</span>
+            <span class="sci-arrow" id="arr-neuro">▸</span>
+          </div>
+          <div class="sci-body" id="sci-neuro">
+            Your brain does not experience reality directly — it constructs it. The <strong>reticular activating system (RAS)</strong> filters roughly 400 billion bits of incoming data per second down to ~2,000 that match your existing beliefs and identity. Change your self-concept, and your RAS literally begins filtering for different evidence in the same environment.<br><br>
+            <strong>Neuroplasticity</strong> (Hebbian learning: "neurons that fire together, wire together") means that every time you mentally rehearse a desired state with emotional intensity, you lay down new neural architecture — the same pathways that would be activated by the real experience. Dr. Joe Dispenza's research on mental rehearsal, and studies on athletes using visualization, confirm that the brain cannot reliably distinguish between vivid imagination and physical experience.<br><br>
+            <strong>The default mode network (DMN)</strong> maintains your self-narrative and pulls you back to familiar identity patterns — this is the neurological source of the "old story." Meditation, intentional visualization, and somatic practices quiet the DMN and create windows for identity-level reprogramming.<br><br>
+            <em>Key principle:</em> Manifestation is subconscious reprogramming. Repetition + emotional charge + embodiment = new neural wiring = new default perception = new "attracted" reality.
+          </div>
+        </div>
+
+        <div class="sci-item" onclick="toggleSci('heart')">
+          <div class="sci-header">
+            <span class="sci-icon">💓</span>
+            <span class="sci-title">Heart Coherence & the Electromagnetic Field</span>
+            <span class="sci-arrow" id="arr-heart">▸</span>
+          </div>
+          <div class="sci-body" id="sci-heart">
+            The HeartMath Institute has measured that the heart generates an <strong>electromagnetic field extending up to several feet outside the body</strong> — far larger than the brain's field. This field fluctuates with emotional states: stress and negative emotion create incoherent, chaotic patterns; feelings of appreciation, love, and coherence create ordered, sine-wave-like patterns.<br><br>
+            In a state of <strong>heart coherence</strong>, the heart's rhythm entrains the brain, promoting synchronized activity across cortical and subcortical regions. This state is measurably associated with improved perception, decision-making, creativity, and resilience — and is the neurophysiological state that most closely maps to what manifestation teachers call "alignment."<br><br>
+            Research also shows that the heart processes emotional information before the brain does — meaning your felt state is not secondary to your thoughts, it's primary. <strong>Emotion is the carrier wave of intention.</strong><br><br>
+            <em>Key practice:</em> 5 minutes of heart-focused breathing (inhale 5 counts, exhale 5 counts) while deliberately generating appreciation moves you into measurable coherence — and into a state where both neuroscience and LOA agree you are most receptive.
+          </div>
+        </div>
+      </div>
+
+      <div class="card-label" style="margin-bottom:0.5rem">Integrated Practices</div>
+      <p style="font-size:0.78rem;color:var(--muted);line-height:1.7;margin-bottom:1.4rem">
+        Each practice works simultaneously at the quantum (observer/field), neurological (rewiring/RAS), somatic (nervous system), and psychological (belief/identity) levels.
+      </p>
+
+      <div class="technique-grid">
+        <div class="technique-card" onclick="showTechnique('parts')">
+          <span class="tech-icon">🧩</span>
+          <div class="tech-name">Parts Dialogue</div>
+          <div class="tech-desc">Meet the part of you that doubts — IFS-informed inner work</div>
+        </div>
+        <div class="technique-card" onclick="showTechnique('somatic')">
+          <span class="tech-icon">🫁</span>
+          <div class="tech-name">Somatic Reset</div>
+          <div class="tech-desc">Regulate your nervous system to access a receptive state</div>
+        </div>
+        <div class="technique-card" onclick="showTechnique('identity')">
+          <span class="tech-icon">🪞</span>
+          <div class="tech-name">Identity Scripting</div>
+          <div class="tech-desc">Rewrite your self-concept at the belief level, not just thoughts</div>
+        </div>
+        <div class="technique-card" onclick="showTechnique('belief')">
+          <span class="tech-icon">🔍</span>
+          <div class="tech-name">Belief Audit</div>
+          <div class="tech-desc">CBT-informed: surface and reframe limiting core beliefs</div>
+        </div>
+        <div class="technique-card" onclick="showTechnique('visualize')">
+          <span class="tech-icon">🌌</span>
+          <div class="tech-name">Embodied Vision</div>
+          <div class="tech-desc">Visualization grounded in the body — felt sense, not fantasy</div>
+        </div>
+        <div class="technique-card" onclick="showTechnique('gratitude')">
+          <span class="tech-icon">🙏</span>
+          <div class="tech-name">Gratitude Rewire</div>
+          <div class="tech-desc">Use neuroplasticity science to shift your baseline state</div>
+        </div>
+      </div>
+
+      <div class="technique-detail" id="technique-detail"></div>
+
+      <!-- COMMUNITY EXPERIENCE -->
+      <div class="card-label" style="margin-top:1.6rem;margin-bottom:0.8rem">◈ Community Experience</div>
+      <div class="community-intro">Based on your recent check-ins, here are real community threads, searches, and resources matched to where you are right now.</div>
+      <div id="community-resources">
+        <div class="empty-state" style="padding:1.5rem 0.5rem">
+          <span class="empty-icon" style="font-size:1.4rem">◈</span>
+          Check in first — Lumina will surface community resources matched to your current state.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMELINE PANEL -->
+  <div class="panel" id="panel-timeline">
+    <div class="card">
+      <div class="card-label">◉ Your Manifestation Journey</div>
+      <p class="timeline-intro" id="tl-intro-quote">"The outside world is a shadow of the inner. The inner always wins — persist in your new story and the world must rearrange itself."</p>
+
+      <!-- BELIEF MOMENTUM METER -->
+      <div class="belief-meter-wrap">
+        <div class="belief-label-row">
+          <span class="belief-label">Belief Momentum</span>
+          <span class="belief-value" id="belief-label-text">—</span>
+        </div>
+        <div class="belief-track">
+          <div class="belief-fill" id="belief-fill" style="width:0%"></div>
+        </div>
+        <div class="belief-poles">
+          <span>Deep Resistance</span>
+          <span>Unwavering Knowing</span>
+        </div>
+      </div>
+
+      <!-- STREAK -->
+      <div class="card-label" style="margin-bottom:0.6rem">Persistence Streak</div>
+      <div class="streak-row" id="streak-row"></div>
+
+      <!-- OSCILLATION NOTE -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.4rem;font-size:0.76rem;color:var(--soft);line-height:1.8">
+        <span style="color:var(--gold);font-weight:400">✦ The science of why you oscillate:</span><br>
+        Neuroscience: your <strong style="color:var(--text)">default mode network</strong> is wired to maintain a coherent self-narrative. When you commit to a new identity, it generates cognitive dissonance and pulls back to the familiar — this is <em>Hebbian learning</em> working against you temporarily. The solution isn't force. It's repetition: <em>neurons that fire together, wire together.</em><br><br>
+        Quantum physics: your consciousness functions as an <strong style="color:var(--text)">observer that collapses possibility into experience</strong>. When you've spent years observing from a particular identity, that's your habitual waveform. Shifting it requires sustained, emotionally-charged new observation — not a single moment of certainty. <strong style="color:var(--text)">Every return to your desired state, even briefly, recalibrates your observer.</strong> The field responds to pattern, not perfection.
+      </div>
+
+      <!-- TIMELINE SPINE -->
+      <div class="card-label" style="margin-bottom:1rem">State Journey</div>
+      <div id="tl-main-chart" style="margin-bottom:1.6rem"></div>
+      <div id="tl-spine">
+        <div class="empty-state"><span class="empty-icon">◉</span>Your journey begins with your first check-in.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOALS PANEL -->
+  <div class="panel" id="panel-goals">
+    <div class="card">
+      <div class="card-label">Manifestation Intentions</div>
+      <div class="goal-input-row">
+        <input class="goal-input" id="goal-input" placeholder="What are you calling into your reality?" onkeydown="if(event.key==='Enter')addGoal()">
+        <button class="btn-primary" style="margin-top:0;padding:0.6em 1.2em" onclick="addGoal()">✦ Set</button>
+      </div>
+      <div class="goals-list" id="goals-list"></div>
+
+      <!-- DATA TOOLS -->
+      <div style="margin-top:2rem;padding-top:1.2rem;border-top:1px solid var(--border)">
+        <div class="card-label" style="margin-bottom:0.8rem">Journal Data</div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1rem">
+          <button class="data-tool-btn" onclick="exportData()">↓ Export journal</button>
+          <button class="data-tool-btn" onclick="document.getElementById('import-file').click()">↑ Import journal</button>
+          <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+          <button class="data-tool-btn" style="color:var(--gold);border-color:var(--gold-dim)" onclick="openBackfill()">+ Add past entry</button>
+        </div>
+        <div style="font-size:0.65rem;color:var(--muted);line-height:1.7">Export saves your full journal as a JSON file. Import it back into any version of Lumina. Use "Add past entry" to reconstruct entries you remember.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BACKFILL MODAL -->
+  <div id="backfill-modal" style="display:none;position:fixed;inset:0;background:rgba(11,13,26,0.85);z-index:1000;display:none;align-items:center;justify-content:center;padding:1.5rem">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.6rem;max-width:420px;width:100%;max-height:90vh;overflow-y:auto">
+      <div class="card-label" style="margin-bottom:1rem">✦ Add a Past Entry</div>
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:1.2rem;line-height:1.7;font-style:italic">Reconstruct a check-in from memory. Lumina won't generate a reply — just records the moment.</div>
+
+      <div style="margin-bottom:0.8rem">
+        <label style="font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:0.4rem">Date</label>
+        <input type="date" id="bf-date" style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.55em 0.8em;color:var(--text);font-family:Lato,sans-serif;font-size:0.82rem">
+      </div>
+
+      <div style="margin-bottom:0.8rem">
+        <label style="font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:0.4rem">Time</label>
+        <input type="time" id="bf-time" style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.55em 0.8em;color:var(--text);font-family:Lato,sans-serif;font-size:0.82rem">
+      </div>
+
+      <div style="margin-bottom:0.8rem">
+        <label style="font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:0.5rem">Mood</label>
+        <div style="display:flex;flex-wrap:wrap;gap:0.4rem" id="bf-moods">
+          ${['✨ Aligned','🌊 Flowing','🌙 Reflective','🌱 Growing','💫 Hopeful','🌪 Scattered','😔 Doubting'].map(m =>
+            `<button class="mood-btn" style="font-size:0.7rem;padding:0.35em 0.7em" onclick="selectBfMood(this,'${m}')">${m}</button>`
+          ).join('')}
+        </div>
+      </div>
+
+      <div style="margin-bottom:1.2rem">
+        <label style="font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:0.4rem">What you were feeling / thinking (optional)</label>
+        <textarea id="bf-text" rows="3" style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.6em 0.8em;color:var(--text);font-family:'Cormorant Garamond',serif;font-size:0.92rem;resize:vertical;line-height:1.6" placeholder="Write what you remember..."></textarea>
+      </div>
+
+      <div style="display:flex;gap:0.6rem">
+        <button class="btn-primary" style="flex:1" onclick="saveBackfill()">✦ Save Entry</button>
+        <button class="data-tool-btn" style="flex:0 0 auto" onclick="closeBackfill()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- end panels -->
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ═══════════════════════════════
+// SUPABASE
+// ═══════════════════════════════
+const SUPA_URL = 'https://wnhfajhfeowwaxoejcfl.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduaGZhamhmZW93d2F4b2VqY2ZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMzYzNDEsImV4cCI6MjA4ODkxMjM0MX0.3O5grdxGngZSx7zStSclfzfVR-kGOEZxtXW7cvx4EhQ';
+const supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+// ── DB HELPERS ──
+async function dbGetProfile(username) {
+  const { data } = await supa.from('profiles').select('*').eq('username', username).single();
+  return data;
+}
+async function dbUpsertProfile(p) {
+  await supa.from('profiles').upsert(p, { onConflict: 'username' });
+}
+async function dbGetEntries(username) {
+  const { data } = await supa.from('entries').select('*').eq('username', username).order('ts', { ascending: false });
+  return data || [];
+}
+async function dbSaveEntry(username, entry) {
+  // entry has: date, ts, mood, text, coach_reply, backfilled
+  const row = { username, date: entry.date, ts: entry.ts, mood: entry.mood||null, text: entry.text||null, coach_reply: entry.coachReply||null, backfilled: !!entry.backfilled };
+  const { data } = await supa.from('entries').upsert(row, { onConflict: 'username,ts' }).select().single();
+  return data;
+}
+async function dbUpdateEntryReply(username, ts, coachReply) {
+  await supa.from('entries').update({ coach_reply: coachReply }).eq('username', username).eq('ts', ts);
+}
+async function dbGetGoals(username) {
+  const { data } = await supa.from('goals').select('*').eq('username', username).order('created_at');
+  return data || [];
+}
+async function dbSaveGoals(username, goals) {
+  // Delete all then re-insert (simplest for small sets)
+  await supa.from('goals').delete().eq('username', username);
+  if (goals.length) {
+    const rows = goals.map(g => ({ username, goal_id: g.id, text: g.text, done: !!g.done }));
+    await supa.from('goals').insert(rows);
+  }
+}
+
+// Convert DB row → app entry format
+function rowToEntry(r) {
+  return { date: r.date, ts: r.ts, mood: r.mood||'', text: r.text||'', coachReply: r.coach_reply||'', backfilled: r.backfilled||false };
+}
+// Convert DB row → app goal format  
+function rowToGoal(r) {
+  return { id: r.goal_id, text: r.text, done: r.done||false };
+}
+
+
+// ═══════════════════════════════
+// STARS
+// ═══════════════════════════════
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const stars = Array.from({length: 120}, () => ({
+  x: Math.random() * canvas.width,
+  y: Math.random() * canvas.height,
+  r: Math.random() * 1.2 + 0.2,
+  a: Math.random(),
+  speed: Math.random() * 0.005 + 0.002,
+  dir: Math.random() > 0.5 ? 1 : -1
+}));
+function drawStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(s => {
+    s.a += s.speed * s.dir;
+    if (s.a > 0.8 || s.a < 0.05) s.dir *= -1;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${s.a})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+drawStars();
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+// ═══════════════════════════════
+// STATE
+// ═══════════════════════════════
+let selectedMood = '';
+let goals = [];
+let entries = [];
+
+const affirmations = [
+  "You already have what you want. You're just remembering it.",
+  "The wish is fulfilled. Act like it.",
+  "Your assumptions are creating your reality right now — choose better ones.",
+  "Everyone is you pushed out. Change the inner world first.",
+  "You don't have to earn it. You just have to accept it.",
+  "Living in the end isn't lying to yourself — it's the whole practice.",
+  "A bad mood is not a bad manifestation. Come back to the state.",
+  "You are the operant power. Nothing and no one else decides this.",
+  "The 3D is old news. What matters is what you're assuming RIGHT NOW.",
+  "Your self-concept is the blueprint. Revise it and the world rearranges.",
+  "Persist. Persist. Persist. That's the whole secret.",
+  "You are always manifesting — the question is whether it's conscious.",
+];
+
+// ═══════════════════════════════
+// INIT
+// ═══════════════════════════════
+// affirmation & date set in bootApp()
+
+// ═══════════════════════════════
+// MEASURE & SET OFFSETS
+// ═══════════════════════════════
+function setOffsets() {
+  const topBar = document.getElementById('top-bar');
+  const app = document.getElementById('main-app');
+  const composer = document.getElementById('composer-wrap');
+  const thread = document.getElementById('chat-thread');
+
+  const topH = topBar ? topBar.offsetHeight : 140;
+  const composerH = composer ? composer.offsetHeight : 130;
+
+  if (app) app.style.paddingTop = (topH + 12) + 'px';
+  if (thread) thread.style.paddingBottom = (composerH + 24) + 'px';
+}
+
+// ═══════════════════════════════
+// INIT
+// ═══════════════════════════════
+// ═══════════════════════════════
+// AUTH & PERSISTENT STORAGE
+// ═══════════════════════════════
+let currentUser = null; // { username, pinHash }
+
+function hashPin(username, pin) {
+  // Simple deterministic hash — not cryptographic, but keeps pins private from casual inspection
+  const str = username.toLowerCase() + ':' + pin;
+  let h = 0;
+  for (let i = 0; i < str.length; i++) { h = (Math.imul(31, h) + str.charCodeAt(i)) | 0; }
+  return Math.abs(h).toString(36);
+}
+
+function userKey(key) {
+  return 'lumina_' + key + '_' + (currentUser?.username || 'anon');
+}
+
+async function saveEntries() {
+  // Supabase — individual entries saved on creation; bulk save not needed
+  // This is a no-op kept for compatibility; use dbSaveEntry for new entries
+}
+async function saveGoals() {
+  try { await dbSaveGoals(currentUser.username, goals); } catch(e) { console.error('saveGoals', e); }
+}
+async function loadData() {
+  entries = []; goals = [];
+  try {
+    const rows = await dbGetEntries(currentUser.username);
+    entries = rows.map(rowToEntry);
+  } catch(e) { console.error('loadData entries', e); }
+  try {
+    const rows = await dbGetGoals(currentUser.username);
+    goals = rows.map(rowToGoal);
+  } catch(e) { console.error('loadData goals', e); }
+}
+
+// Profile registry no longer needed — credentials derive storage key directly
+// getProfiles / saveProfiles removed
+
+// Session persistence — session-only (tab/window lifetime via sessionStorage)
+function getSession() {
+  try {
+    const s = sessionStorage.getItem('lumina_session');
+    return s ? JSON.parse(s) : null;
+  } catch(e) { return null; }
+}
+function saveSession(user) {
+  try { sessionStorage.setItem('lumina_session', JSON.stringify(user)); } catch(e) {}
+}
+function clearSession() {
+  try { sessionStorage.removeItem('lumina_session'); } catch(e) {}
+}
+
+// ── LOGIN SCREEN LOGIC ──
+let loginMode = 'login'; // 'login' | 'signup'
+
+function showLoginTab(mode) {
+  loginMode = mode;
+  const loginBtn  = document.getElementById('login-tab-btn');
+  const signupBtn = document.getElementById('signup-tab-btn');
+  const submitBtn = document.getElementById('login-submit-btn');
+  loginBtn.style.background  = mode === 'login'  ? 'var(--card)' : 'transparent';
+  loginBtn.style.color       = mode === 'login'  ? 'var(--text)' : 'var(--muted)';
+  signupBtn.style.background = mode === 'signup' ? 'var(--card)' : 'transparent';
+  signupBtn.style.color      = mode === 'signup' ? 'var(--text)' : 'var(--muted)';
+  submitBtn.textContent      = mode === 'login'  ? '✦ ENTER' : '✦ CREATE PROFILE';
+  clearLoginError();
+}
+
+function clearLoginError() {
+  document.getElementById('login-error').textContent = '';
+}
+function showLoginError(msg) {
+  document.getElementById('login-error').textContent = msg;
+}
+
+async function handleLoginSubmit() {
+  const username = document.getElementById('login-username').value.trim().toLowerCase();
+  const pin      = document.getElementById('login-pin').value.trim();
+
+  if (!username) { showLoginError('Please enter a username.'); return; }
+  if (pin.length < 1) { showLoginError('Please enter a password.'); return; }
+
+  const pinHash = hashPin(username, pin);
+  currentUser = { username, pinHash };
+  saveSession(currentUser);
+
+  // Check if this user exists in Supabase
+  let hasData = false;
+  try {
+    const existing = await dbGetProfile(username);
+    hasData = !!existing;
+    // Verify password if user exists
+    if (existing && existing.pin_hash !== pinHash) {
+      showLoginError('Incorrect password. Try again.');
+      currentUser = null;
+      clearSession();
+      return;
+    }
+  } catch(_) {}
+
+  const isNewUser = !hasData && loginMode === 'signup';
+
+  if (isNewUser) {
+    document.getElementById('login-screen').style.display = 'none';
+    showOnboarding();
+  } else {
+    await bootApp();
+  }
+}
+
+async function logOut() {
+  if (!confirm('Sign out of ' + currentUser?.username + '?')) return;
+  clearSession();
+  currentUser = null;
+  entries = []; goals = [];
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('top-bar').style.display  = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-username').value = '';
+  document.getElementById('login-pin').value = '';
+  showLoginTab('login');
+}
+
+async function bootApp() {
+  try {
+    await loadData();
+    await loadProfile();
+  } catch(e) { console.error('loadData/loadProfile error:', e); }
+
+  const hide = id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; };
+  const show = (id, d='block') => { const el = document.getElementById(id); if(el) el.style.display = d; };
+
+  hide('login-screen');
+  hide('onboarding-screen');
+  show('top-bar');
+  show('main-app');
+
+  const displayName = currentProfile?.name || currentUser?.username || '';
+  const pnEl = document.getElementById('profile-name');
+  if(pnEl) pnEl.textContent = displayName;
+
+  const now = new Date();
+  const aff = affirmations[now.getDate() % affirmations.length];
+  const affEl = document.getElementById('affirmation-text');
+  if(affEl) affEl.textContent = '✦ ' + aff;
+
+  try { renderGoals(); } catch(e) {}
+  try { renderChatThread(); } catch(e) {}
+  setTimeout(setOffsets, 100);
+}
+
+// ── PROFILE (onboarding data) ──
+let currentProfile = null;
+
+async function loadProfile() {
+  currentProfile = null;
+  try {
+    const p = await dbGetProfile(currentUser.username);
+    if (p) currentProfile = { name: p.name, age: p.age, gender: p.gender, exp: p.exp, focus: p.focus, block: p.block, dob: p.dob };
+  } catch(e) { console.error('loadProfile', e); }
+}
+async function saveProfile(data) {
+  currentProfile = data;
+  try {
+    await dbUpsertProfile({
+      username: currentUser.username,
+      pin_hash: currentUser.pinHash,
+      name: data.name||null, age: data.age||null, gender: data.gender||null,
+      exp: data.exp||null, focus: data.focus||null, block: data.block||null, dob: data.dob||null
+    });
+  } catch(e) { console.error('saveProfile', e); }
+}
+
+function showOnboarding() {
+  const screen = document.getElementById('onboarding-screen');
+  screen.style.display = 'flex';
+  // Stars
+  const lc = document.getElementById('ob-stars');
+  if (lc) {
+    lc.width = window.innerWidth; lc.height = window.innerHeight;
+    const lctx = lc.getContext('2d');
+    for (let i = 0; i < 80; i++) {
+      lctx.beginPath();
+      lctx.arc(Math.random()*lc.width, Math.random()*lc.height, Math.random()*1.2+0.2, 0, Math.PI*2);
+      lctx.fillStyle = `rgba(255,255,255,${Math.random()*0.4+0.1})`;
+      lctx.fill();
+    }
+  }
+}
+
+function selectObChip(btn, fieldId, value) {
+  const container = btn.parentElement;
+  container.querySelectorAll('.ob-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(fieldId).value = value;
+}
+
+// Multi-select version — toggles individual chips, stores comma-separated values
+function toggleObChip(btn, fieldId, value) {
+  btn.classList.toggle('active');
+  const container = btn.parentElement;
+  const selected = [...container.querySelectorAll('.ob-chip.active')].map(b => b.textContent.trim());
+  document.getElementById(fieldId).value = selected.join(', ');
+}
+
+async function saveOnboarding() {
+  const name  = document.getElementById('ob-name').value.trim();
+  const dob   = document.getElementById('ob-dob').value;
+  const gender = document.getElementById('ob-gender').value;
+  const exp   = document.getElementById('ob-exp').value;
+  const focus = document.getElementById('ob-focus').value;
+  const block = document.getElementById('ob-block').value.trim();
+
+  if (!name) { document.getElementById('ob-error').textContent = 'Please tell Lumina what to call you.'; return; }
+
+  // Calculate age from DOB
+  let age = null;
+  if (dob) {
+    const diff = Date.now() - new Date(dob).getTime();
+    age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+  }
+
+  await saveProfile({ name, dob, age, gender, exp, focus, block });
+  await bootApp();
+}
+
+async function skipOnboarding() {
+  await saveProfile({ name: currentUser.username, dob: null, age: null, gender: null, exp: null, focus: null, block: null });
+  await bootApp();
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Hide app until auth confirmed
+  document.getElementById('top-bar').style.display  = 'none';
+  document.getElementById('main-app').style.display = 'none';
+
+  // Draw stars on login canvas too
+  const lc = document.getElementById('login-stars');
+  if (lc) {
+    lc.width = window.innerWidth; lc.height = window.innerHeight;
+    const lctx = lc.getContext('2d');
+    for (let i = 0; i < 80; i++) {
+      lctx.beginPath();
+      lctx.arc(Math.random()*lc.width, Math.random()*lc.height, Math.random()*1.2+0.2, 0, Math.PI*2);
+      lctx.fillStyle = `rgba(255,255,255,${Math.random()*0.4+0.1})`;
+      lctx.fill();
+    }
+  }
+
+  // Check for existing session
+  const session = getSession();
+  if (session?.username) {
+    currentUser = session;
+    await bootApp();
+    window.addEventListener('resize', setOffsets);
+    return;
+  }
+
+  // Show login
+  document.getElementById('login-screen').style.display = 'flex';
+  window.addEventListener('resize', setOffsets);
+});
+
+// ═══════════════════════════════
+// MOOD
+// ═══════════════════════════════
+function selectMood(btn, mood) {
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedMood = mood;
+}
+
+// ═══════════════════════════════
+// HELPERS
+// ═══════════════════════════════
+function timeStr(ts) {
+  return new Date(ts).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+}
+function todayKey() {
+  return new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+}
+function scrollThread() {
+  // Scroll page to bottom so last bubble is above the composer
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════
+// RENDER CHAT THREAD (today only)
+// ═══════════════════════════════
+function renderChatThread() {
+  const thread = document.getElementById('chat-thread');
+  const today = todayKey();
+  const todayEntries = entries.filter(e => e.date === today);
+
+  if (!todayEntries.length) {
+    thread.innerHTML = `
+      <div class="chat-welcome">
+        <span class="wlc-glyph">✦</span>
+        <div class="wlc-title">Good to see you today</div>
+        <div class="wlc-sub">Select a mood below and share what's on your mind.<br>You can check in as many times as you need — Lumina is here.</div>
+      </div>`;
+    return;
+  }
+
+  // Group entries in chronological order (oldest first for display)
+  const sorted = [...todayEntries].sort((a, b) => a.ts - b.ts);
+  let html = `<div class="chat-day-divider"><span>✦ ${today}</span></div>`;
+
+  sorted.forEach(e => {
+    const moodCls = getMoodClass(e.mood);
+    html += `
+      <div class="bubble-user">
+        <div class="bubble-meta">
+          ${e.mood ? `<span class="mood-chip">${e.mood}</span>` : ''}
+          <span>${timeStr(e.ts)}</span>
+        </div>
+        <div class="bubble-body">${e.text || '<em style="color:var(--muted)">mood check-in</em>'}</div>
+      </div>`;
+
+    if (e.coachReply) {
+      html += `
+        <div class="bubble-lumina">
+          <div class="bubble-meta">✦ Lumina · ${timeStr(e.ts + 100)}</div>
+          <div class="bubble-body">${e.coachReply}</div>
+        </div>`;
+    }
+  });
+
+  thread.innerHTML = html;
+  setTimeout(scrollThread, 50);
+}
+
+// ═══════════════════════════════
+// SEND MESSAGE
+// ═══════════════════════════════
+async function sendMessage() {
+  const input = document.getElementById('journal-input');
+  const text = input.value.trim();
+  if (!text && !selectedMood) return;
+
+  const sendBtn = document.getElementById('send-btn');
+  sendBtn.disabled = true;
+
+  const entry = {
+    date: todayKey(),
+    ts: Date.now(),
+    mood: selectedMood,
+    text,
+    coachReply: null
+  };
+
+  // Clear input immediately
+  input.value = '';
+  const mood = selectedMood;
+  selectedMood = '';
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+
+  // Show user bubble immediately
+  const thread = document.getElementById('chat-thread');
+  // Remove welcome screen if present
+  const welcome = thread.querySelector('.chat-welcome');
+  if (welcome) welcome.remove();
+  // Add day divider if first message today
+  const today = todayKey();
+  if (!thread.querySelector('.chat-day-divider')) {
+    thread.insertAdjacentHTML('beforeend', `<div class="chat-day-divider"><span>✦ ${today}</span></div>`);
+  }
+
+  const moodCls = getMoodClass(mood);
+  thread.insertAdjacentHTML('beforeend', `
+    <div class="bubble-user">
+      <div class="bubble-meta">
+        ${mood ? `<span class="mood-chip">${mood}</span>` : ''}
+        <span>${timeStr(entry.ts)}</span>
+      </div>
+      <div class="bubble-body">${text || '<em style="color:var(--muted)">mood check-in</em>'}</div>
+    </div>`);
+  scrollThread();
+
+  // ── INFER MOOD if none selected ──
+  let inferredMood = mood;
+  let moodBubbleMeta = thread.lastElementChild; // the user bubble we just added
+
+  if (!mood && text) {
+    try {
+      const inferRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-opus-4-6',
+          max_tokens: 20,
+          messages: [{ role: 'user', content: `Read this journal entry and reply with ONLY one of these exact labels — nothing else, no punctuation, no explanation:
+✨ Aligned
+🌊 Flowing
+🌙 Reflective
+🌱 Growing
+💫 Hopeful
+🌪 Scattered
+😔 Doubting
+
+Entry: "${text}"` }]
+        })
+      });
+      const inferData = await inferRes.json();
+      const raw = inferData.content?.[0]?.text?.trim() || '';
+      const validMoods = ['✨ Aligned','🌊 Flowing','🌙 Reflective','🌱 Growing','💫 Hopeful','🌪 Scattered','😔 Doubting'];
+      inferredMood = validMoods.find(m => raw.includes(m)) || '';
+    } catch(e) { inferredMood = ''; }
+
+    if (inferredMood) {
+      entry.mood = inferredMood;
+      // Patch the mood chip into the already-rendered user bubble
+      const metaEl = moodBubbleMeta?.querySelector('.bubble-meta');
+      if (metaEl && !metaEl.querySelector('.mood-chip')) {
+        const chip = document.createElement('span');
+        chip.className = 'mood-chip inferred';
+        chip.title = 'inferred from your entry';
+        chip.textContent = inferredMood;
+        metaEl.insertBefore(chip, metaEl.firstChild);
+      }
+    }
+  }
+
+  const effectiveMood = inferredMood;
+  const isDoubtDay = ['😔 Doubting','🌪 Scattered'].includes(effectiveMood);
+  const resBanner = document.getElementById('resistance-banner');
+  const resText = document.getElementById('resistance-text');
+  if (isDoubtDay) {
+    const resistanceMessages = [
+      "Okay, so here's the thing about doubt — it's not a sign you're doing it wrong. It's a sign your self-concept is being challenged. The 3D is just reflecting the OLD you. Your job right now isn't to feel amazing. It's to hold the assumption anyway.",
+      "A bad mood is NOT a bad manifestation. You don't have to feel perfect to manifest. You just have to get back to the wish fulfilled. Even for 60 seconds. That's the whole practice.",
+      "This resistance you're feeling? That's the gap between your old self-concept and the new one closing. It's not a block — it's a bridge. The discomfort means something is actually shifting.",
+    ];
+    resText.innerHTML = resistanceMessages[entries.length % resistanceMessages.length];
+    resBanner.classList.add('visible');
+  } else {
+    resBanner.classList.remove('visible');
+  }
+
+  // Save entry to Supabase immediately (coach reply updated after)
+  try { await dbSaveEntry(currentUser.username, entry); } catch(e) { console.error('save entry', e); }
+
+  // Show typing indicator
+  const typingId = 'typing-' + Date.now();
+  thread.insertAdjacentHTML('beforeend', `
+    <div class="bubble-lumina bubble-typing" id="${typingId}">
+      <div class="bubble-meta">✦ Lumina</div>
+      <div class="bubble-body"><span class="loading-dots"><span></span><span></span><span></span></span></div>
+    </div>`);
+  scrollThread();
+
+  // Build coach prompt
+  const goalsList = goals.map(g => g.text).join(', ') || 'not yet set';
+  const recentMoods = entries.slice(0, 5).map(e => e.mood || 'unspecified').join(' → ');
+  const todayConversation = entries.filter(e => e.date === today)
+    .sort((a,b) => a.ts - b.ts)
+    .map(e => `[${timeStr(e.ts)}] ${e.mood ? e.mood + ' · ' : ''}${e.text || '(mood check-in)'}`)
+    .join('\n');
+
+  // Full journal history — every entry with mood, message and coach reply
+  const fullHistory = [...entries]
+    .sort((a,b) => a.ts - b.ts)
+    .map(e => {
+      const reply = e.coachReply ? '\nLumina: ' + e.coachReply.replace(/<[^>]+>/g,'').trim() : '';
+      return `[${e.date} ${timeStr(e.ts)}] ${e.mood ? e.mood + ' · ' : ''}${e.text || '(check-in)'}${reply}`;
+    })
+    .join('\n\n');
+
+  // Profile context
+  const p = currentProfile || {};
+  const profileContext = [
+    p.name   ? `Name: ${p.name}` : null,
+    p.age    ? `Age: ${p.age}` : null,
+    p.gender ? `Gender: ${p.gender}` : null,
+    p.exp    ? `Manifestation experience: ${p.exp}` : null,
+    p.focus  ? `Primary focus: ${p.focus}` : null,
+    p.block  ? `Their self-identified biggest block: "${p.block}"` : null,
+  ].filter(Boolean).join('\n- ');
+
+  const prompt = `You are Lumina — a manifestation coach at the intersection of neuroscience, psychology, and conscious creation. You're inspired by teachers like Manifest with Genevieve, Neville Goddard, and the real lived experience of thousands of people in manifestation communities who've done this work and shared what actually helps.
+
+COMMUNITY WISDOM YOU'VE ABSORBED (draw on this naturally, never lecture it):
+Real people in these communities have learned: the biggest block is almost always self-concept, not technique. People succeed when they drop the old story completely — not when they find the perfect affirmation. "I worked on my self-concept and my SP and I are now in a committed healthy relationship" is the pattern. The bridge of incidents unfolds in ways you don't expect — the $20k didn't come how they planned, the SP texted out of nowhere. "Don't fixate on the how." The mental diet is where most people fall down — they do SATS at night then spend all day looking for evidence of the old story in the 3D. "Techniques are not the magic pill — you are." Doubt almost always comes from: watching the 3D too closely, worrying about timeline, or carrying the old story into the new chapter. The void state, SATS, revision, and scripting work best when the person feels into it sensorially — "the exact scene she imagined is what manifested." People who succeed let go of being a victim and decide they are the creator. The mental diet isn't suppression — it's choosing which inner conversation to run: "I know I have doubts and I can still manifest exactly what I desire." Persistence is the single most cited factor in success stories. Not technique. Persistence.
+
+YOUR VOICE:
+- Address them by name (${p.name || 'their username'}) occasionally — naturally, not every message
+- Warm, direct, human — like a knowledgeable friend who's done this work and coached others through it
+- Weave community language naturally: "wish fulfilled", "self-concept", "living in the end", "SATS", "the operant power", "assumption", "3D", "bridge of incidents", "mental diet", "old story", "specific person", "revision", "inner conversation"
+- Weave neuroscience in as the WHY: "your RAS is literally filtering for evidence of the old story — it's not truth, it's just the most-worn pathway"; "the default mode network is wired to protect the familiar self-narrative — doubt is its alarm system, not a verdict"
+- Calibrate depth to their experience: ${p.exp ? (p.exp.includes('new') ? 'they are brand new — explain concepts clearly, don\'t assume jargon knowledge' : p.exp.includes('month') ? 'a few months in — knows the basics, ready to go deeper' : '3+ years deep — skip the basics, go straight to nuance') : 'unknown experience level, gauge from their language'}
+- Never bullet points, headers, or numbered lists. Flowing paragraphs.
+- Never open with "absolutely", "certainly", "great". Vary sentence openings.
+- **Bold** 2–3 key phrases. Occasional CAPS for real emphasis.
+
+WHO YOU'RE COACHING:
+${profileContext || '(profile not yet set — gauge from their messages)'}
+
+CONTEXT:
+- What they just shared: mood = ${effectiveMood || 'not set'}, message = "${text || '(mood check-in)'}"
+- Today's conversation so far:\n${todayConversation || '(first message today)'}
+- Their intentions: ${goalsList}
+- Days on this journey: ${entries.length}
+- Recent mood arc: ${recentMoods || 'just starting'}
+- In doubt/resistance: ${isDoubtDay}
+- Full journal history — every check-in and your previous replies (you remember all of this, like a real coach would):\n${fullHistory || '(first session — no history yet)'}
+
+CONSISTENCY RULE: You have memory of what you've said before. Don't contradict previous advice. Don't repeat the same insight or practice you just gave. Build on where they are — each response should move them one step further, not circle back to square one.
+
+HOW TO RESPOND:
+Really see what they've shared. Name what's happening — the pattern, the block, the state. Give one insight that connects the neuroscience to the community wisdom — the "oh THAT'S what's going on" moment. Then bring it into one specific, doable practice right now: a SATS scene, a revision, a scripting prompt, an inner conversation to run, a somatic anchor. Close with one line that lands.
+
+If they're doubting: normalise it with the science, name the exact pattern (watching the 3D, mental diet slipping, old story running), redirect to the wish fulfilled with something concrete.
+If they're aligned: deepen it — anchor it neurologically, give them a scene to run in SATS tonight, or a scripted inner conversation to hold all day.
+If mood has shifted today: name the arc. That's real data.
+
+FORMAT & LENGTH: Always respond in 3-4 tight paragraphs, 150-180 words total. Every sentence earns its place. No padding, no preamble, no trailing affirmations. Sharp and to the point.`;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-opus-4-6',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      console.error('API error:', res.status, JSON.stringify(data));
+      throw new Error(`API ${res.status}: ${data?.error?.message || 'unknown'}`);
+    }
+    if (!data.content?.[0]?.text) {
+      console.error('Unexpected API response:', JSON.stringify(data));
+      throw new Error('Empty response from API');
+    }
+    coachReply = data.content[0].text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .split('\n\n').map(p => `<p>${p}</p>`).join('');
+  } catch(e) {
+    console.error('Coach fetch error:', e);
+    coachReply = `<p>Take a breath — something interrupted the connection. <em style="font-size:0.75em;color:var(--muted)">(${e.message})</em></p><p>Try again when you're ready. ✦</p>`;
+  }
+
+  // Remove typing indicator
+  document.getElementById(typingId)?.remove();
+
+  // Add Lumina reply bubble
+  thread.insertAdjacentHTML('beforeend', `
+    <div class="bubble-lumina">
+      <div class="bubble-meta">✦ Lumina · ${timeStr(Date.now())}</div>
+      <div class="bubble-body">${coachReply}</div>
+    </div>`);
+  scrollThread();
+
+  // Save entry with coach reply (mood may have been inferred above)
+  entry.mood = effectiveMood || entry.mood;
+  entry.coachReply = coachReply;
+  entries.unshift(entry);
+  try { await dbUpdateEntryReply(currentUser.username, entry.ts, coachReply); } catch(e) { console.error('update reply', e); }
+
+  sendBtn.disabled = false;
+}
+
+// ═══════════════════════════════
+// TABS
+// ═══════════════════════════════
+function switchTab(id) {
+  const tabIds = ['checkin','timeline','techniques','goals'];
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', tabIds[i] === id);
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+
+  // Show composer only on check-in tab
+  const composer = document.getElementById('composer-wrap');
+  if (composer) composer.style.display = id === 'checkin' ? 'block' : 'none';
+
+  if (id === 'techniques') loadCommunityResources();
+  if (id === 'timeline') renderTimeline();
+  if (id === 'checkin') { renderChatThread(); setTimeout(setOffsets, 50); }
+
+  // Scroll main content back to top on tab switch
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════
+// TIMELINE — grouped by day
+// ═══════════════════════════════
+const moodClass = {
+  '✨ Aligned': 'certainty', '🌊 Flowing': 'flowing', '🌙 Reflective': 'hopeful',
+  '🌱 Growing': 'hopeful', '💫 Hopeful': 'hopeful', '🌪 Scattered': 'scattered', '😔 Doubting': 'doubt'
+};
+
+const persistenceNotes = {
+  certainty: "You were in your power today. This is the frequency of your manifestation.",
+  flowing: "Ease and flow — the universe moves through you when you get out of the way.",
+  hopeful: "Hope is faith with its eyes open. You kept going. That is everything.",
+  doubt: "You showed up anyway. Doubt days are the most sacred — this is where manifestors are made.",
+  scattered: "Even scattered, you checked in. That persistence is the practice."
+};
+
+function getMoodClass(mood) {
+  return moodClass[mood] || 'hopeful';
+}
+
+const MOOD_SCORE = { '✨ Aligned':95,'🌊 Flowing':80,'🌙 Reflective':62,'🌱 Growing':68,'💫 Hopeful':70,'🌪 Scattered':32,'😔 Doubting':22 };
+const MOOD_COLOR = { certainty:'#c9a96e', flowing:'#6aa8f5', hopeful:'#9b8ec4', scattered:'#777', doubt:'#c48e9b' };
+const CLUSTER_GAP_MS = 90 * 60 * 1000;
+const GROUP_THRESHOLD = 5;
+
+const Y_LEVELS = [
+  { score:95, label:'Aligned' },
+  { score:75, label:'Flowing' },
+  { score:62, label:'Hopeful' },
+  { score:35, label:'Scattered' },
+  { score:22, label:'Doubting' },
+];
+
+function renderTimeline() {
+  const chartEl   = document.getElementById('tl-main-chart');
+  const spineEl   = document.getElementById('tl-spine');
+  const streakRow = document.getElementById('streak-row');
+  const beliefFill= document.getElementById('belief-fill');
+  const beliefLbl = document.getElementById('belief-label-text');
+
+  if (!entries.length) {
+    chartEl.innerHTML = '';
+    spineEl.innerHTML = `<div class="empty-state"><span class="empty-icon">◉</span>Your journey begins with your first check-in.</div>`;
+    streakRow.innerHTML = '';
+    beliefFill.style.width = '0%';
+    beliefLbl.textContent = '—';
+    return;
+  }
+
+  const recent = entries.slice(0,7);
+  const avg = recent.reduce((s,e)=>s+(MOOD_SCORE[e.mood]||55),0)/recent.length;
+  beliefFill.style.width = avg+'%';
+  beliefLbl.textContent = avg>=80?'Unwavering ✦':avg>=60?'Building ◈':avg>=40?'Oscillating ◎':'In the Dip ◇';
+
+  const byDay = {};
+  entries.forEach(e=>{ if(!byDay[e.date]) byDay[e.date]=[]; byDay[e.date].push(e); });
+  const days = Object.keys(byDay).sort((a,b)=>(byDay[a][0]?.ts||0)-(byDay[b][0]?.ts||0));
+
+  streakRow.innerHTML = days.slice(-21).map(day=>{
+    const allDoubt = byDay[day].every(e=>{ const c=getMoodClass(e.mood); return c==='doubt'||c==='scattered'; });
+    return `<div class="streak-dot ${allDoubt?'doubt-day':'done'}" title="${day}"></div>`;
+  }).join('') + `<span class="streak-label">${days.length} day${days.length!==1?'s':''} · ${entries.length} moment${entries.length!==1?'s':''}</span>`;
+
+  // ── Plot all entries, clustering consecutive same-state runs ──
+  const allSorted = entries.slice().sort((a,b) => a.ts - b.ts);
+
+  // Collapse consecutive runs of the same mood into one point
+  // The point sits at the midpoint timestamp of the run, dot size reflects run length
+  const runs = [];
+  let i = 0;
+  while (i < allSorted.length) {
+    const mood = allSorted[i].mood;
+    let j = i;
+    while (j < allSorted.length && allSorted[j].mood === mood) j++;
+    const run = allSorted.slice(i, j);
+    const midTs = run[Math.floor(run.length / 2)].ts;
+    runs.push({ mood, count: run.length, ts: midTs, date: run[0].date, entries: run });
+    i = j;
+  }
+
+  const minTs = runs[0].ts;
+  const maxTs = runs[runs.length-1].ts;
+  const totalSpan = Math.max(maxTs - minTs, 1);
+
+  const chartPts = runs.map(r => ({
+    x: runs.length === 1 ? 0.5 : Math.min(Math.max((r.ts - minTs) / totalSpan, 0.01), 0.99),
+    score: MOOD_SCORE[r.mood] || 55,
+    mood: r.mood, count: r.count, date: r.date, entries: r.entries,
+    color: MOOD_COLOR[getMoodClass(r.mood)] || MOOD_COLOR.hopeful,
+  }));
+
+  // Day boundary markers
+  const dayBoundaries = [];
+  for (let k = 1; k < chartPts.length; k++) {
+    if (chartPts[k].date !== chartPts[k-1].date) {
+      dayBoundaries.push({ x: (chartPts[k-1].x + chartPts[k].x) / 2, label: shortDate(chartPts[k].date) });
+    }
+  }
+
+  // ── SVG ──
+  const VW = 520, VH = 210;
+  const PAD = { top: 30, right: 16, bottom: 36, left: 58 };
+  const chartW = VW - PAD.left - PAD.right;
+  const chartH = VH - PAD.top - PAD.bottom;
+
+  const scores = chartPts.map(p => p.score);
+  const minScore = Math.max(0,  Math.min(...scores) - 14);
+  const maxScore = Math.min(100, Math.max(...scores) + 14);
+  const scoreRange = Math.max(maxScore - minScore, 20);
+
+  const scoreToY = s => PAD.top + chartH - ((s - minScore) / scoreRange) * chartH;
+  const xToSvg   = x => PAD.left + x * chartW;
+  const rawPts = chartPts.map(p => ({ ...p, sx: xToSvg(p.x), sy: scoreToY(p.score) }));
+
+  // ── Spatial proximity merge ──
+  // Any points whose dots would visually overlap (centres < MIN_DIST px apart)
+  // get merged into one point: weighted-average position, dominant mood, combined count
+  const MIN_DIST = 28;
+  const merged = [];
+  const used = new Set();
+  for (let a = 0; a < rawPts.length; a++) {
+    if (used.has(a)) continue;
+    const group = [rawPts[a]];
+    used.add(a);
+    for (let b = a + 1; b < rawPts.length; b++) {
+      if (used.has(b)) continue;
+      const dx = rawPts[b].sx - rawPts[a].sx;
+      const dy = rawPts[b].sy - rawPts[a].sy;
+      if (Math.sqrt(dx*dx + dy*dy) < MIN_DIST) {
+        group.push(rawPts[b]);
+        used.add(b);
+      }
+    }
+    if (group.length === 1) {
+      merged.push(group[0]);
+    } else {
+      // Weighted average position by count
+      const totalCount = group.reduce((s, p) => s + p.count, 0);
+      const avgSx = group.reduce((s, p) => s + p.sx * p.count, 0) / totalCount;
+      const avgSy = group.reduce((s, p) => s + p.sy * p.count, 0) / totalCount;
+      // Dominant mood = highest count; tie-break by score
+      const dominant = group.reduce((a, b) => a.count > b.count ? a : b.count > a.count ? b : (a.score > b.score ? a : b));
+      // Collect all unique mood labels
+      const moodCounts = {};
+      group.forEach(p => { moodCounts[p.mood] = (moodCounts[p.mood] || 0) + p.count; });
+      const allEntries = group.flatMap(p => p.entries);
+      merged.push({
+        ...dominant,
+        sx: avgSx, sy: avgSy,
+        count: totalCount,
+        entries: allEntries,
+        moodCounts,
+        multiMood: Object.keys(moodCounts).length > 1,
+        date: group[0].date,
+      });
+    }
+  }
+  const svgPts = merged;
+
+  // Smooth catmull-rom-style curve
+  function smoothPath(pts) {
+    if (pts.length === 1) return `M${pts[0].sx.toFixed(1)},${pts[0].sy.toFixed(1)}`;
+    if (pts.length === 2) return `M${pts[0].sx.toFixed(1)},${pts[0].sy.toFixed(1)} C${pts[0].sx.toFixed(1)},${pts[0].sy.toFixed(1)} ${pts[1].sx.toFixed(1)},${pts[1].sy.toFixed(1)} ${pts[1].sx.toFixed(1)},${pts[1].sy.toFixed(1)}`;
+    let d = `M${pts[0].sx.toFixed(1)},${pts[0].sy.toFixed(1)}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[Math.max(i-1, 0)];
+      const p1 = pts[i];
+      const p2 = pts[i+1];
+      const p3 = pts[Math.min(i+2, pts.length-1)];
+      const cp1x = p1.sx + (p2.sx - p0.sx) / 6;
+      const cp1y = p1.sy + (p2.sy - p0.sy) / 6;
+      const cp2x = p2.sx - (p3.sx - p1.sx) / 6;
+      const cp2y = p2.sy - (p3.sy - p1.sy) / 6;
+      d += ` C${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2.sx.toFixed(1)},${p2.sy.toFixed(1)}`;
+    }
+    return d;
+  }
+
+  const linePath = smoothPath(svgPts);
+
+  // Gradient area fill under the line
+  const areaPath = svgPts.length > 1
+    ? linePath + ` L${svgPts[svgPts.length-1].sx.toFixed(1)},${PAD.top+chartH} L${svgPts[0].sx.toFixed(1)},${PAD.top+chartH} Z`
+    : '';
+
+  // Y refs
+  const visibleLevels = Y_LEVELS.filter(lv => lv.score >= minScore - 5 && lv.score <= maxScore + 5);
+  const yRefs = visibleLevels.map(lv => {
+    const y = scoreToY(lv.score);
+    return `<line x1="${PAD.left}" y1="${y.toFixed(1)}" x2="${VW-PAD.right}" y2="${y.toFixed(1)}" stroke="#252a45" stroke-width="0.7" stroke-dasharray="3,5"/>
+            <text x="${PAD.left-6}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#6b6880" font-family="Lato,sans-serif">${lv.label}</text>`;
+  }).join('');
+
+  // Day dividers
+  const dayLines = dayBoundaries.map(b => {
+    const bx = xToSvg(b.x);
+    return `<line x1="${bx.toFixed(1)}" y1="${PAD.top}" x2="${bx.toFixed(1)}" y2="${PAD.top+chartH}" stroke="var(--gold-dim)" stroke-width="0.8" stroke-dasharray="2,4" opacity="0.4"/>
+            <text x="${bx.toFixed(1)}" y="${PAD.top-5}" text-anchor="middle" font-size="7.5" fill="var(--gold-dim)" font-family="Lato,sans-serif">${b.label}</text>`;
+  }).join('');
+
+  // X labels — time, thinned if crowded
+  const xLabels = svgPts.map((p, i) => {
+    if (svgPts.length > 10 && i % 3 !== 0) return '';
+    if (svgPts.length > 5  && i % 2 !== 0) return '';
+    return `<text x="${p.sx.toFixed(1)}" y="${VH-8}" text-anchor="middle" font-size="7.5" fill="#6b6880" font-family="Lato,sans-serif">${timeStr(p.entries[0].ts)}</text>`;
+  }).join('');
+
+  // Dots — size reflects total count, label handles multi-mood clusters
+  const dataDots = svgPts.map((p) => {
+    const r = Math.min(5 + p.count * 1.5, 12);
+    const labelY = p.sy > PAD.top + 20 ? p.sy - r - 4 : p.sy + r + 12;
+    const anchor = p.sx < PAD.left + 35 ? 'start' : p.sx > VW - PAD.right - 35 ? 'end' : 'middle';
+
+    // Label: if merged cluster with multiple moods, show top 2 by count
+    let labelText;
+    if (p.multiMood && p.moodCounts) {
+      const sorted = Object.entries(p.moodCounts).sort((a,b) => b[1]-a[1]);
+      const top = sorted.slice(0,2).map(([mood, cnt]) => mood.replace(/^[\S]+\s/, '') + (cnt > 1 ? ` ×${cnt}` : '')).join(' / ');
+      labelText = top;
+    } else {
+      const moodShort = (p.mood || '').replace(/^[\S]+\s/, '');
+      labelText = moodShort + (p.count > 1 ? ` ×${p.count}` : '');
+    }
+
+    const tooltip = p.multiMood
+      ? Object.entries(p.moodCounts).map(([m,c]) => `${m} ×${c}`).join(', ')
+      : `${p.mood||''} · ${p.count > 1 ? p.count + ' entries' : timeStr(p.entries[0].ts)}`;
+
+    return `
+      <circle cx="${p.sx.toFixed(1)}" cy="${p.sy.toFixed(1)}" r="${r}" fill="${p.color}" stroke="#0b0d1a" stroke-width="1.5" opacity="0.92">
+        <title>${tooltip}</title>
+      </circle>
+      <text x="${p.sx.toFixed(1)}" y="${labelY.toFixed(1)}" text-anchor="${anchor}" font-size="8" fill="${p.color}" font-family="Lato,sans-serif" opacity="0.9">${labelText}</text>`;
+  }).join('');
+
+  // Dominant line color for gradient
+  const domColor = svgPts[svgPts.length-1]?.color || '#9b8ec4';
+
+  // Now marker
+  const nowTs = Date.now();
+  const nowFrac = nowTs >= minTs ? Math.min((nowTs - minTs) / totalSpan, 0.99) : null;
+  const nowLine = nowFrac !== null ? (() => {
+    const nx = xToSvg(nowFrac);
+    return `<line x1="${nx.toFixed(1)}" y1="${PAD.top}" x2="${nx.toFixed(1)}" y2="${PAD.top+chartH}" stroke="var(--gold-dim)" stroke-width="1" stroke-dasharray="2,4" opacity="0.45"/>
+            <text x="${nx.toFixed(1)}" y="${PAD.top-4}" text-anchor="middle" font-size="7" fill="var(--gold-dim)" font-family="Lato,sans-serif">now</text>`;
+  })() : '';
+
+  const legendItems = [
+    ['✨ Aligned','#c9a96e'],['🌊 Flowing','#6aa8f5'],
+    ['🌙 Hopeful / 🌱 Growing','#9b8ec4'],
+    ['🌪 Scattered','#777'],['😔 Doubting','#c48e9b']
+  ].map(([label,col]) => `
+    <div class="tl-legend-item">
+      <div class="tl-legend-dot" style="background:${col}"></div><span>${label}</span>
+    </div>`).join('');
+
+  chartEl.innerHTML = `
+    <div class="tl-chart-outer">
+      <svg class="tl-chart-svg" viewBox="0 0 ${VW} ${VH}" style="height:210px;overflow:visible;width:100%">
+        <defs>
+          <linearGradient id="tlGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="${domColor}" stop-opacity="0.15"/>
+            <stop offset="100%" stop-color="${domColor}" stop-opacity="0.01"/>
+          </linearGradient>
+        </defs>
+        ${yRefs}
+        ${dayLines}
+        ${areaPath ? `<path d="${areaPath}" fill="url(#tlGrad)"/>` : ''}
+        ${svgPts.length > 1 ? `<path d="${linePath}" fill="none" stroke="${domColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>` : ''}
+        ${dataDots}
+        ${nowLine}
+        ${xLabels}
+      </svg>
+      <div class="tl-legend">${legendItems}</div>
+    </div>`;
+
+
+  // Entry list
+  let spineHtml = '';
+  days.forEach(day => {
+    const de = byDay[day].slice().sort((a,b)=>a.ts-b.ts);
+    const dayId = 'day-'+day.replace(/\W/g,'');
+    const lastColor = MOOD_COLOR[getMoodClass(de[de.length-1]?.mood)]||MOOD_COLOR.hopeful;
+    let entriesHtml = '';
+    if (de.length >= GROUP_THRESHOLD) {
+      const clusters = [];
+      let cur = [de[0]];
+      for (let i=1; i<de.length; i++) {
+        if (de[i].ts - de[i-1].ts < CLUSTER_GAP_MS) cur.push(de[i]);
+        else { clusters.push(cur); cur=[de[i]]; }
+      }
+      clusters.push(cur);
+      entriesHtml = clusters.map((cluster,ci)=>{
+        if (cluster.length===1) return buildEntryNode(cluster[0], de);
+        const moods = cluster.map(e=>e.mood).filter(Boolean);
+        const arc = moods.length>1&&moods[0]!==moods[moods.length-1]?`${moods[0]} → ${moods[moods.length-1]}`:(moods[0]||'');
+        const gcol = MOOD_COLOR[getMoodClass(cluster[cluster.length-1]?.mood)]||MOOD_COLOR.hopeful;
+        const gid = dayId+'c'+ci;
+        return `<div class="tl-group" onclick="toggleGroup('${gid}')">
+            <div class="tl-group-dot" style="background:${gcol};color:#0b0d1a">${cluster.length}</div>
+            <div class="tl-group-body">
+              <div class="tl-group-summary">${timeStr(cluster[0].ts)} – ${timeStr(cluster[cluster.length-1].ts)} · ${arc}</div>
+              <div class="tl-group-expand" id="${gid}-lbl">▸ expand ${cluster.length} entries</div>
+              <div class="tl-group-entries tl-spine-inner" id="${gid}">${cluster.map(e=>buildEntryNode(e,de)).join('')}</div>
+            </div></div>`;
+      }).join('');
+    } else {
+      entriesHtml = de.map(e=>buildEntryNode(e,de)).join('');
+    }
+    spineHtml += `<div class="tl-day-block">
+      <div class="tl-day-label" onclick="toggleDay('${dayId}-entries')">
+        <span style="color:${lastColor}">${day}</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-style:italic;letter-spacing:0;text-transform:none;font-size:0.78rem;color:var(--muted);font-weight:300">${de.length} moment${de.length!==1?'s':''}</span>
+        <span class="tl-day-toggle" id="${dayId}-toggle">▾</span>
+      </div>
+      <div class="tl-day-entries tl-spine-inner" id="${dayId}-entries">${entriesHtml}</div>
+    </div>`;
+  });
+  spineEl.innerHTML = spineHtml;
+}
+
+function getDominantEntry(sorted) {
+  const freq = {};
+  sorted.forEach(e=>{ const m=e.mood||'none'; freq[m]=(freq[m]||0)+1; });
+  const topMood = Object.entries(freq).sort((a,b)=>b[1]-a[1])[0][0];
+  const candidates = sorted.filter(e=>(e.mood||'none')===topMood);
+  return candidates[Math.floor(candidates.length/2)];
+}
+
+function shortDate(dateStr) {
+  const parts = dateStr.split(', ');
+  return parts[1] || dateStr;
+}
+
+function buildEntryNode(e, dayEntries) {
+  const cls   = getMoodClass(e.mood);
+  const color = MOOD_COLOR[cls]||MOOD_COLOR.hopeful;
+  const idx   = dayEntries.indexOf(e);
+  const prev  = dayEntries[idx-1];
+  const shifted = prev&&prev.mood&&e.mood&&prev.mood!==e.mood;
+  const up = shifted&&(MOOD_SCORE[e.mood]||55)>(MOOD_SCORE[prev.mood]||55);
+  return `<div class="tl-entry">
+      <div class="tl-entry-dot" style="background:${color};box-shadow:0 0 5px ${color}55"></div>
+      <div class="tl-entry-body">
+        <div class="tl-entry-meta">
+          <span class="tl-time">${timeStr(e.ts)}</span>
+          ${e.mood?`<span class="tl-mood-pill" style="border-color:${color}55;color:${color}">${e.mood}</span>`:''}
+          ${shifted?`<span class="tl-shift" style="color:${up?'#c9a96e':'#c48e9b'}">${up?'↑ shifted up':'↓ shifted down'}</span>`:''}
+        </div>
+        ${e.text?`<div class="tl-entry-text">${e.text}</div>`:''}
+        ${e.coachReply?`<div class="tl-lumina-reply"><div class="tl-lumina-label">✦ Lumina</div><div class="tl-lumina-text">${e.coachReply}</div></div>`:''}
+      </div></div>`;
+}
+
+function toggleGroup(id) {
+  const el=document.getElementById(id), lbl=document.getElementById(id+'-lbl');
+  if(!el) return;
+  el.classList.toggle('open');
+  const n=el.querySelectorAll('.tl-entry').length;
+  lbl.textContent=el.classList.contains('open')?'▾ collapse':`▸ expand ${n} entries`;
+}
+
+function toggleDay(id) {
+  const el=document.getElementById(id), tog=document.getElementById(id.replace('-entries','-toggle'));
+  if(!el) return;
+  el.classList.toggle('collapsed');
+  if(tog) tog.textContent=el.classList.contains('collapsed')?'▸':'▾';
+}
+
+
+
+// ═══════════════════════════════
+// COMMUNITY RESOURCES
+// ═══════════════════════════════
+let communityCache = null;
+let communityCacheMood = null;
+
+async function loadCommunityResources(force = false) {
+  const el = document.getElementById('community-resources');
+  if (!el) return;
+
+  // Get most recent mood + context
+  const recent = entries.slice(0, 3);
+  const recentMoodSummary = recent.map(e => e.mood || 'unspecified').join(', ');
+  const latestMood = recent[0]?.mood || '';
+  const latestText = recent[0]?.text || '';
+  const goalsList = goals.map(g => g.text).join(', ') || 'not set';
+
+  // No entries yet
+  if (!entries.length) {
+    el.innerHTML = `<div class="empty-state" style="padding:1.5rem 0.5rem"><span class="empty-icon" style="font-size:1.4rem">◈</span>Check in first — Lumina will surface community resources matched to your current state.</div>`;
+    return;
+  }
+
+  // Use cache if mood hasn't changed and not forced
+  if (!force && communityCache && communityCacheMood === latestMood) {
+    el.innerHTML = communityCache;
+    return;
+  }
+
+  // Show loading
+  el.innerHTML = `<div class="community-loading"><span class="loading-dots"><span></span><span></span><span></span></span> Finding resources matched to your current state...</div>`;
+
+  const prompt = `You are a manifestation community curator. Based on someone's current emotional state, profile, and intentions, generate a JSON object with curated community resources that would be most relevant and motivating for them RIGHT NOW.
+
+Their profile:
+- Name: ${currentProfile?.name || 'unknown'}
+- Experience: ${currentProfile?.exp || 'unknown'}
+- Primary focus: ${currentProfile?.focus || 'unknown'}
+- Self-identified block: ${currentProfile?.block || 'none shared'}
+
+Their current state:
+- Latest mood: ${latestMood || 'unknown'}
+- Recent moods: ${recentMoodSummary}
+- What they shared: "${latestText}"
+- Their intentions: ${goalsList}
+
+Return ONLY a valid JSON object in exactly this structure, no markdown, no explanation:
+{
+  "context_line": "one sentence explaining why these resources fit their current state (warm, direct, feels personally relevant)",
+  "reddit_searches": [
+    { "query": "exact search string to paste into Reddit", "subreddit": "NevilleGoddard or lawofassumption or lawofattraction", "why": "one short sentence on why this search will help them" },
+    { "query": "...", "subreddit": "...", "why": "..." },
+    { "query": "...", "subreddit": "...", "why": "..." }
+  ],
+  "youtube_searches": [
+    { "query": "exact YouTube search string", "channel_hint": "e.g. Manifest with Genevieve, or leave blank", "why": "one short sentence" },
+    { "query": "...", "channel_hint": "...", "why": "..." }
+  ],
+  "success_story_angles": [
+    { "title": "short evocative title like a post headline", "description": "1-2 sentences describing what kind of success story this is and why it's relevant to them now" },
+    { "title": "...", "description": "..." }
+  ]
+}
+
+Make the Reddit queries specific and searchable — something someone could literally paste in and find relevant threads. Match them precisely to the person's state (if doubting, find doubt → breakthrough stories; if aligned, find stories that deepen and validate; if working on an SP, target those threads). Keep everything grounded, warm, and genuinely useful.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-opus-4-6',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content[0].text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(raw);
+    const html = renderCommunityResources(parsed);
+    communityCache = html;
+    communityCacheMood = latestMood;
+    el.innerHTML = html;
+  } catch(e) {
+    el.innerHTML = `<div style="font-size:0.72rem;color:var(--muted);padding:0.8rem 0">Couldn't load resources right now — try again in a moment.</div>
+      <div class="community-refresh" onclick="loadCommunityResources(true)">↻ retry</div>`;
+  }
+}
+
+function renderCommunityResources(data) {
+  const redditItems = (data.reddit_searches || []).map(r => `
+    <div class="community-search-link" onclick="window.open('https://www.reddit.com/r/${r.subreddit}/search/?q=${encodeURIComponent(r.query)}&sort=top','_blank')">
+      "${r.query}"
+      <span>r/${r.subreddit} · ${r.why}</span>
+    </div>`).join('');
+
+  const ytItems = (data.youtube_searches || []).map(y => `
+    <div class="community-search-link" onclick="window.open('https://www.youtube.com/results?search_query=${encodeURIComponent(y.query)}','_blank')">
+      ${y.query}${y.channel_hint ? ` — ${y.channel_hint}` : ''}
+      <span>YouTube · ${y.why}</span>
+    </div>`).join('');
+
+  const storyItems = (data.success_story_angles || []).map(s => `
+    <div class="community-item">
+      <div class="community-item-title">${s.title}</div>
+      <div class="community-item-meta">${s.description}</div>
+    </div>`).join('');
+
+  return `
+    ${data.context_line ? `<div style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-style:italic;color:var(--soft);margin-bottom:1.2rem;padding-left:0.8rem;border-left:2px solid var(--gold-dim);line-height:1.6">${data.context_line}</div>` : ''}
+
+    <div class="community-section">
+      <div class="community-section-label">◈ Reddit Threads to Search</div>
+      ${redditItems}
+    </div>
+
+    <div class="community-section">
+      <div class="community-section-label">▷ YouTube</div>
+      ${ytItems}
+    </div>
+
+    <div class="community-section">
+      <div class="community-section-label">✦ Success Story Angles</div>
+      <div style="font-size:0.68rem;color:var(--muted);margin-bottom:0.6rem;font-style:italic">Search these story types on Reddit or YouTube when you need proof it works</div>
+      ${storyItems}
+    </div>
+
+    <div class="community-refresh" onclick="loadCommunityResources(true)">↻ refresh for updated suggestions</div>`;
+}
+
+
+function addGoal() {
+  const input = document.getElementById('goal-input');
+  const text = input.value.trim();
+  if (!text) return;
+  goals.push({ id: Date.now(), text, done: false, progress: 0, date: new Date().toLocaleDateString() });
+  saveGoals();
+  input.value = '';
+  renderGoals();
+}
+
+function toggleGoal(id) {
+  goals = goals.map(g => g.id === id ? {...g, done: !g.done, progress: g.done ? g.progress : 100} : g);
+  saveGoals();
+  renderGoals();
+}
+
+function deleteGoal(id) {
+  goals = goals.filter(g => g.id !== id);
+  saveGoals();
+  renderGoals();
+}
+
+function updateProgress(id, val) {
+  goals = goals.map(g => g.id === id ? {...g, progress: parseInt(val)} : g);
+  saveGoals();
+  document.getElementById('prog-label-' + id).textContent = val + '%';
+  document.getElementById('prog-fill-' + id).style.width = val + '%';
+}
+
+function renderGoals() {
+  const el = document.getElementById('goals-list');
+  if (!goals.length) {
+    el.innerHTML = '<div class="empty-state"><span class="empty-icon">◎</span>Set your first intention above.<br>The universe is ready to receive it.</div>';
+    return;
+  }
+  el.innerHTML = goals.map(g => `
+    <div class="goal-item">
+      <div class="goal-check ${g.done ? 'done' : ''}" onclick="toggleGoal(${g.id})">${g.done ? '✓' : ''}</div>
+      <div class="goal-text-block">
+        <div class="goal-title ${g.done ? 'done' : ''}">${g.text}</div>
+        <div class="goal-meta">Set ${g.date}</div>
+        <div style="display:flex;align-items:center;gap:0.6rem;margin-top:0.5rem">
+          <input type="range" min="0" max="100" value="${g.progress}" 
+            style="flex:1;accent-color:var(--gold);background:var(--border);height:3px;border-radius:2px;outline:none;border:none;cursor:pointer"
+            oninput="updateProgress(${g.id}, this.value)">
+          <span id="prog-label-${g.id}" style="font-size:0.62rem;color:var(--muted);min-width:2rem">${g.progress}%</span>
+        </div>
+        <div class="goal-progress-bar">
+          <div class="goal-progress-fill" id="prog-fill-${g.id}" style="width:${g.progress}%"></div>
+        </div>
+      </div>
+      <button class="goal-delete" onclick="deleteGoal(${g.id})">✕</button>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════
+// TECHNIQUES
+// ═══════════════════════════════
+const techniques = {
+  parts: {
+    name: 'Parts Dialogue (IFS-Informed)',
+    icon: '🧩',
+    intro: 'Internal Family Systems (IFS) teaches that we are made of "parts" — inner voices that protect us, carry old wounds, or push us forward. The part of you that doubts your manifestation is not your enemy. It\'s a protector trying to keep you safe from disappointment. When you meet it with curiosity instead of suppression, it releases its grip.',
+    steps: [
+      'Find a quiet space. Close your eyes, take 3 slow breaths, and arrive in your body.',
+      'Notice the part that carries doubt, anxiety, or resistance. Where do you feel it in your body? A tightness in the chest? A heaviness in the stomach?',
+      'Instead of pushing it away, turn toward it. Say internally: "I see you. I\'m not trying to get rid of you."',
+      'Ask this part: "What are you afraid will happen if I keep going?" Listen without judgment.',
+      'Ask: "What do you need to feel safe enough to let me move forward?"',
+      'Offer it reassurance from your wiser self: "I hear you. I\'m going to take care of us. You don\'t have to carry this alone."',
+      'Notice any softening in the body. Return to your desired state from a place of wholeness, not suppression.'
+    ]
+  },
+  somatic: {
+    name: 'Somatic Nervous System Reset',
+    icon: '🫁',
+    intro: 'Your nervous system determines what feels possible. When you\'re in a stress response (sympathetic activation), your brain literally cannot access the creative, expansive thinking required for intentional manifestation. This practice brings you into a regulated, receptive state — which is the physiological equivalent of "being in alignment."',
+    steps: [
+      'Sit or lie comfortably. Uncross your arms and legs. Let your jaw soften.',
+      'Box breathing: inhale for 4 counts, hold for 4, exhale for 4, hold for 4. Repeat 4 times.',
+      'Place one hand on your chest and one on your lower belly. Feel both rise and fall.',
+      'Slow your exhale to be longer than your inhale (e.g. in for 4, out for 7). This activates the vagus nerve and shifts you into parasympathetic rest.',
+      'Now do a slow body scan from feet to crown — noticing sensation without judgment.',
+      'From this regulated state, hold a brief image of your desired outcome. Notice how it feels in the body now, when you\'re not braced.',
+      'Seal it: say silently "This is available to me. I am open to receive."'
+    ]
+  },
+  identity: {
+    name: 'Identity-Level Scripting',
+    icon: '🪞',
+    intro: 'Most affirmations fail because they try to convince a skeptical mind. Identity scripting works differently — it rewrites your self-concept at the level of "who I am," not "what I want." Neuroscience shows that behavior and belief follow identity: when you genuinely shift your sense of self, your actions, perceptions, and results follow automatically.',
+    steps: [
+      'At the top of a page, write: "I am the kind of person who..." and complete it with your desired identity (e.g. "...is deeply loved," "...earns abundantly," "...is in excellent health").',
+      'Write 5–10 sentences describing what this version of you naturally does, thinks, and feels. Not what they want — what they ARE.',
+      'Include one small daily behavior this identity has that you can adopt today.',
+      'Write the evidence this version of you notices in the world — what they perceive, attract, receive.',
+      'Read it aloud slowly, pausing to feel each line land in your body.',
+      'Ask: "What would this version of me do in the next hour?" Then do that one thing.'
+    ]
+  },
+  belief: {
+    name: 'Core Belief Audit (CBT-Informed)',
+    icon: '🔍',
+    intro: 'Cognitive Behavioral Therapy teaches us that our automatic thoughts are driven by deep core beliefs — often formed in childhood, often running silently in the background. These beliefs are the real "blocks" in manifestation. You can\'t out-affirm a belief you haven\'t examined. This practice surfaces them so you can consciously work with them.',
+    steps: [
+      'Identify the goal or desire you\'re manifesting. Write it at the top of a page.',
+      'Ask: "What does a part of me believe about whether I deserve this or can have it?" Write whatever comes — don\'t filter.',
+      'For each limiting belief, ask: "Where did I learn this? How old was I? Who taught me this?" (These are old beliefs, not truths.)',
+      'Rate how true each belief feels in your body on a scale of 0–10.',
+      'Now write a "bridge belief" — not a forced positive affirmation, but a genuinely believable middle step. E.g. instead of "I am a millionaire," try "It is possible that people like me can build financial security."',
+      'Practice the bridge belief daily until it feels solid, then take one step further.'
+    ]
+  },
+  visualize: {
+    name: 'Embodied Visualization',
+    icon: '🌌',
+    intro: 'Research on mental rehearsal (used by elite athletes and performers) shows that vivid, felt visualization creates the same neural pathways as physical experience. The key most people miss: it must be felt in the body, not just seen in the mind. A visualization you can\'t feel somatically is just daydreaming. This practice grounds it.',
+    steps: [
+      'Do the Somatic Reset first (3-4 box breaths) to enter a receptive state.',
+      'Close your eyes and set a clear scene: a specific moment in your desired reality. Make it concrete — a room, a conversation, a feeling.',
+      'Step INTO the scene as yourself (first person, present tense). You are not watching it — you are living it.',
+      'Slowly activate each sense: what do you see, hear, smell, feel on your skin?',
+      'Now ask: what does this feel like in your BODY? Find the physical sensation of this reality — warmth, expansion, lightness, ease — and amplify it.',
+      'Hold the feeling for 60–90 seconds minimum. This is long enough to begin forming a new neural association.',
+      'Before opening your eyes, say: "This is already true at the level of identity. I simply allow it to appear."'
+    ]
+  },
+  gratitude: {
+    name: 'Gratitude Rewire',
+    icon: '🙏',
+    intro: 'Gratitude is not just a positive feeling — it has a measurable neurological effect. Regular gratitude practice increases dopamine and serotonin, reduces the amygdala\'s threat response, and literally rewires your baseline perception toward noticing more good. This isn\'t spiritual bypassing — it\'s training your reticular activating system (RAS) to filter for evidence of what you desire.',
+    steps: [
+      'Each morning before checking your phone, write 3 things you\'re genuinely grateful for. (Not just listing — pause and feel each one for 10–15 seconds.)',
+      'For each item, notice where the gratitude lives in your body. Amplify that physical sensation.',
+      'Add 1–2 items of "future gratitude" — things you\'re grateful for as if already received. Write them in past tense: "I\'m so grateful that..."',
+      'Throughout the day, do "gratitude micro-doses": 3-second pauses to notice something good, however small.',
+      'Before sleep, review 3 moments from the day that contained any positive experience. This encodes them as significant to your brain during sleep consolidation.',
+      'Over 21+ days, notice how your attention shifts — this is your RAS recalibrating to your new signal.'
+    ]
+  }
+};
+
+function toggleSci(key) {
+  const body = document.getElementById('sci-' + key);
+  const arrow = document.getElementById('arr-' + key);
+  const isOpen = body.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.sci-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.sci-arrow').forEach(a => a.classList.remove('open'));
+  // Open clicked if it was closed
+  if (!isOpen) {
+    body.classList.add('open');
+    arrow.classList.add('open');
+  }
+}
+
+function showTechnique(key) {
+  const t = techniques[key];
+  const el = document.getElementById('technique-detail');
+  el.innerHTML = `
+    <h3>${t.icon} ${t.name}</h3>
+    <p>${t.intro}</p>
+    <ol class="technique-steps">
+      ${t.steps.map(s => `<li>${s}</li>`).join('')}
+    </ol>
+    <button class="btn-secondary" style="margin-top:1rem" onclick="this.closest('.technique-detail').classList.remove('visible')">✕ Close</button>
+  `;
+  el.classList.add('visible');
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+// ═══════════════════════════════
+// EXPORT / IMPORT / BACKFILL
+// ═══════════════════════════════
+function exportData() {
+  const data = { entries, goals, exportedAt: new Date().toISOString(), version: 1 };
+  const json = JSON.stringify(data, null, 2);
+
+  // Create modal overlay
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.5rem';
+
+  overlay.innerHTML = `
+    <div style="background:#131629;border:1px solid #252a45;border-radius:14px;padding:1.5rem;width:100%;max-width:500px;max-height:80vh;display:flex;flex-direction:column;gap:1rem">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:#c9a96e">Export Journal</span>
+        <button onclick="this.closest('div[style]').parentElement.remove()" style="background:none;border:none;color:#6b6880;font-size:1.2rem;cursor:pointer;line-height:1">×</button>
+      </div>
+      <div style="font-size:0.72rem;color:#b0aac0;line-height:1.6">Copy this JSON and save it somewhere safe — Notes, a text file, anywhere.</div>
+      <textarea id="export-json" readonly style="flex:1;min-height:200px;background:#0f1225;border:1px solid #252a45;border-radius:8px;padding:0.75rem;color:#e8e4f0;font-family:monospace;font-size:0.65rem;resize:none;outline:none;line-height:1.5">${json}</textarea>
+      <button onclick="
+        navigator.clipboard.writeText(document.getElementById('export-json').value)
+          .then(()=>{ this.textContent='✦ Copied!'; setTimeout(()=>this.textContent='✦ Copy to Clipboard',2000); })
+          .catch(()=>{ document.getElementById('export-json').select(); document.execCommand('copy'); this.textContent='✦ Copied!'; setTimeout(()=>this.textContent='✦ Copy to Clipboard',2000); })
+      " style="background:linear-gradient(135deg,#7a6040,#c9a96e);border:none;border-radius:10px;padding:0.7em;color:#0b0d1a;font-family:Lato,sans-serif;font-size:0.78rem;letter-spacing:0.12em;cursor:pointer">✦ Copy to Clipboard</button>
+    </div>`;
+
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.entries) {
+        entries = data.entries;
+        for (const e of data.entries) {
+          try { await dbSaveEntry(currentUser.username, e); } catch(_) {}
+        }
+      }
+      if (data.goals) {
+        goals = data.goals;
+        await saveGoals();
+      }
+      renderGoals();
+      renderChatThread();
+      alert('✦ Journal restored successfully.');
+    } catch(err) {
+      alert('Could not read that file — make sure it\'s a Lumina export JSON.');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+let bfMood = '';
+function openBackfill() {
+  bfMood = '';
+  const modal = document.getElementById('backfill-modal');
+  modal.style.display = 'flex';
+  // Set default date/time to now
+  const now = new Date();
+  document.getElementById('bf-date').value = now.toISOString().slice(0,10);
+  document.getElementById('bf-time').value = now.toTimeString().slice(0,5);
+  document.getElementById('bf-text').value = '';
+  document.querySelectorAll('#bf-moods .mood-btn').forEach(b => b.classList.remove('active'));
+}
+
+function closeBackfill() {
+  document.getElementById('backfill-modal').style.display = 'none';
+}
+
+function selectBfMood(btn, mood) {
+  bfMood = mood;
+  document.querySelectorAll('#bf-moods .mood-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+async function saveBackfill() {
+  const dateVal = document.getElementById('bf-date').value;
+  const timeVal = document.getElementById('bf-time').value;
+  const text    = document.getElementById('bf-text').value.trim();
+
+  if (!dateVal) { alert('Please pick a date.'); return; }
+  if (!bfMood)  { alert('Please select a mood.'); return; }
+
+  const ts = new Date(dateVal + 'T' + (timeVal || '12:00')).getTime();
+  const dateObj = new Date(ts);
+  const dateKey = dateObj.toLocaleDateString('en-US', { weekday:'short', year:'numeric', month:'short', day:'numeric' });
+
+  const entry = {
+    date: dateKey,
+    ts,
+    mood: bfMood,
+    text: text || '',
+    coachReply: '',
+    backfilled: true
+  };
+
+  entries.push(entry);
+  entries.sort((a,b) => b.ts - a.ts);
+  try { await dbSaveEntry(currentUser.username, entry); } catch(e) { console.error('backfill save', e); }
+  closeBackfill();
+  renderChatThread();
+  alert('✦ Entry added.');
+}
+</script>
+</body>
+</html>
