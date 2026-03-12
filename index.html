@@ -1659,8 +1659,11 @@ const supa = supabase.createClient(SUPA_URL, SUPA_KEY);
 
 // ── DB HELPERS ──
 async function dbGetProfile(username) {
-  const { data } = await supa.from('profiles').select('*').eq('username', username).single();
-  return data;
+  try {
+    const { data, error } = await supa.from('profiles').select('*').eq('username', username).maybeSingle();
+    if (error) { console.error('dbGetProfile', error); return null; }
+    return data;
+  } catch(e) { return null; }
 }
 async function dbUpsertProfile(p) {
   await supa.from('profiles').upsert(p, { onConflict: 'username' });
@@ -1694,7 +1697,8 @@ async function dbSaveGoals(username, goals) {
 // ── API KEY MANAGEMENT ──
 async function dbGetApiKey() {
   try {
-    const { data } = await supa.from('settings').select('value').eq('key', 'anthropic_api_key').single();
+    const { data, error } = await supa.from('settings').select('value').eq('key', 'anthropic_api_key').maybeSingle();
+    if (error) { console.error('dbGetApiKey', error); return null; }
     return data?.value || null;
   } catch(e) { return null; }
 }
