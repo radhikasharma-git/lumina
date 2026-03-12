@@ -2176,7 +2176,7 @@ async function sendMessage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'claude-opus-4-6',
+          model: 'claude-sonnet-4-6',
           max_tokens: 20,
           messages: [{ role: 'user', content: `Read this journal entry and reply with ONLY one of these exact labels — nothing else, no punctuation, no explanation:
 ✨ Aligned
@@ -2308,7 +2308,7 @@ FORMAT & LENGTH: Always respond in 3-4 tight paragraphs, 150-180 words total. Ev
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-opus-4-6',
+        model: 'claude-sonnet-4-6',
         max_tokens: 1000,
         messages: [{ role: 'user', content: prompt }]
       })
@@ -2815,7 +2815,7 @@ Make the Reddit queries specific and searchable — something someone could lite
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-opus-4-6',
+        model: 'claude-sonnet-4-6',
         max_tokens: 1000,
         messages: [{ role: 'user', content: prompt }]
       })
