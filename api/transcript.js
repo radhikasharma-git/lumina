@@ -1,6 +1,4 @@
-import { YoutubeTranscript } from 'youtube-transcript';
-
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -14,7 +12,8 @@ export default async function handler(req, res) {
   const videoId = match[1];
 
   try {
-    // Get video title via YouTube Data API
+    const { YoutubeTranscript } = require('youtube-transcript');
+
     const apiKey = process.env.YOUTUBE_API_KEY;
     let title = 'Unknown Title';
     try {
@@ -25,7 +24,6 @@ export default async function handler(req, res) {
       title = videoData.items?.[0]?.snippet?.title || title;
     } catch(_) {}
 
-    // Fetch transcript using youtube-transcript library
     const transcriptItems = await YoutubeTranscript.fetchTranscript(videoId, { lang: 'en' });
     const transcript = transcriptItems
       .map(item => item.text)
